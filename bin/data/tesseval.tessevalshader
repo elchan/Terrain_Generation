@@ -1,0 +1,70 @@
+/*	COMP 6761 Assignment 1 Framework	
+	Created by Kaustubha Mendhurwar on 09/09/14.
+	Copyright (c) 2014 Concordia University. All rights reserved.
+*/
+
+#version 430
+
+
+/*
+  Code adapted from OGL Dev, "Tutorial 31 - PN Triangles Tessellation"
+  http://ogldev.atspace.co.uk/www/tutorial31/tutorial31.html
+*/
+
+layout(triangles, equal_spacing, cw) in;
+
+out vec3 tePatchDistance;
+//uniform mat4 MVP;
+uniform mat4 ViewProjectonTransform;
+uniform mat4 WorldTransform;
+
+// Structure containing the Bezier Control Points, used to displace the original and tessellated vertices.
+struct OutputPatch
+{
+    vec3 WorldPos_B030;
+    vec3 WorldPos_B021;
+    vec3 WorldPos_B012;
+    vec3 WorldPos_B003;
+    vec3 WorldPos_B102;
+    vec3 WorldPos_B201;
+    vec3 WorldPos_B300;
+    vec3 WorldPos_B210;
+    vec3 WorldPos_B120;
+    vec3 WorldPos_B111;
+    vec3 Normal[3];
+};
+
+in patch OutputPatch oPatch;
+
+out vec3  WorldPos_FS_in;
+out vec3 Normal_FS_in;
+
+void main()
+{
+    tePatchDistance = gl_TessCoord;
+
+    float u = gl_TessCoord.x;
+    float v = gl_TessCoord.y;
+    float w = gl_TessCoord.z;
+
+    float uPow3 = pow(u, 3);
+    float vPow3 = pow(v, 3);
+    float wPow3 = pow(w, 3);
+    float uPow2 = pow(u, 2);
+    float vPow2 = pow(v, 2);
+    float wPow2 = pow(w, 2);
+
+     WorldPos_FS_in = oPatch.WorldPos_B300 * wPow3 +
+                    oPatch.WorldPos_B030 * uPow3 +
+                    oPatch.WorldPos_B003 * vPow3 +
+                    oPatch.WorldPos_B210 * 3.0 * wPow2 * u +
+                    oPatch.WorldPos_B120 * 3.0 * w * uPow2 +
+                    oPatch.WorldPos_B201 * 3.0 * wPow2 * v +
+                    oPatch.WorldPos_B021 * 3.0 * uPow2 * v +
+                    oPatch.WorldPos_B102 * 3.0 * w * vPow2 +
+                    oPatch.WorldPos_B012 * 3.0 * u * vPow2 +
+                    oPatch.WorldPos_B111 * 6.0 * w * u * v;
+
+    gl_Position = ViewProjectonTransform * WorldTransform * vec4(WorldPos_FS_in, 1.0);
+}
+

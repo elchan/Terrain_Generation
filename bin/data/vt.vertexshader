@@ -1,0 +1,19 @@
+#version 410
+uniform float minHeight;
+uniform float maxHeight;
+uniform float scale;
+uniform mat4 modelViewProjectionMatrix;
+layout(location = 0) in vec4 position;
+layout(location = 10) in vec4 color;
+ 
+out VertexData {
+    vec2 texCoord;
+    vec3 normal;
+} VertexOut;
+ 
+void main()
+{
+    //VertexOut.texCoord = texCoord;
+    //VertexOut.normal = normal;
+    gl_Position = modelViewProjectionMatrix * position;
+}

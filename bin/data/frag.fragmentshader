@@ -1,0 +1,10 @@
+#version 150
+ 
+out vec3 color;
+
+in vec4 vertex_color;
+ 
+void main()
+{
+    color = vec3(vertex_color.xyz);
+}
