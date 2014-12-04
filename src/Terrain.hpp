@@ -246,7 +246,8 @@ struct Terrain {
 	{
 		return (v1-center).getCrossed((v2-center));
 	}
-
+    ofMesh mesh;
+    ofVbo vbo;
 private:
     /**
      * Add a quad to the mesh with clockwise front face vertex order
@@ -319,8 +320,7 @@ private:
    
     
 
-    ofMesh mesh;
-    ofVbo vbo;
+  
     
 };
 

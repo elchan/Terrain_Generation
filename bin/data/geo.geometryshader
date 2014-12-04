@@ -1,4 +1,4 @@
-#version 150
+#version 400
 uniform float minHeight;
 uniform float maxHeight;
 uniform float scale;
@@ -16,13 +16,16 @@ in VertexData {
     vec3 normal;
 } VertexIn[1];
 */
- 
+
+in vec4 GS_in_vertexColor[];
+out vec4 FS_in_vertexColor;
+
 out VertexData {
     vec2 texCoord;
     vec3 normal;
 } VertexOut;
  
- out vec4 vertex_color;
+ //out vec4 vertex_color;
 
  vec4 setColor(vec4 position)
  {
@@ -66,74 +69,42 @@ out VertexData {
 
  void main()
 {
-
-  for(int i = 0; i < gl_in.length(); i++)
-  {
-    gl_Position = gl_in[i].gl_Position;
-    //VertexOut.normal = VertexIn[i].normal;
-    //VertexOut.texCoord = VertexIn[i].texCoord;
-	vertex_color = vec4(1,0,1,1);
-    EmitVertex();
-  }
-
-  EndPrimitive();
-  return;	
-/*
-float d = 1;
-
-	float x = gl_in[0].gl_Position.x;
-	float y = gl_in[0].gl_Position.y;
-	float z = gl_in[0].gl_Position.z;
-
-		gl_Position = gl_in[0].gl_Position+vec4(d,d,z,0);
-		vertex_color = vec4(1,1,1,1);
-		EmitVertex();
-		gl_Position = gl_in[0].gl_Position+vec4(-d,d,z,0);
-		vertex_color = vec4(1,1,1,1);
-		EmitVertex();
-		gl_Position = gl_in[0].gl_Position+vec4(d,-d,z,0);
-		vertex_color = vec4(1,1,1,1);
-		EmitVertex();
-		gl_Position = gl_in[0].gl_Position+vec4(-d,-d,z,0);
-		vertex_color = vec4(1,1,1,1);
-		EmitVertex();
-		*/
-
-		//EndPrimitive();
+//
 
 
 		gl_Position = gl_in[0].gl_Position;
-		vertex_color = setColor(gl_Position);
-		EmitVertex();
-
-		gl_Position = divide(gl_in[1].gl_Position, gl_in[0].gl_Position);
-		vertex_color = setColor(gl_Position);
+        FS_in_vertexColor = GS_in_vertexColor[0];
 		EmitVertex();
 
 		gl_Position = gl_in[1].gl_Position;
-		vertex_color = setColor(gl_Position);
+        FS_in_vertexColor = GS_in_vertexColor[1];
 		EmitVertex();
-
-		gl_Position = divide(gl_in[2].gl_Position, gl_in[1].gl_Position);
-		vertex_color = setColor(gl_Position);
-		EmitVertex();
-
+        
 		gl_Position = gl_in[2].gl_Position;
-		vertex_color = setColor(gl_Position);
+        FS_in_vertexColor = GS_in_vertexColor[2];
+		EmitVertex();
+        
+        gl_Position = (gl_in[2].gl_Position + gl_in[1].gl_Position) / 2;
+        FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
 		EmitVertex();
 
-		gl_Position = divide(gl_in[3].gl_Position, gl_in[2].gl_Position);
-		vertex_color = setColor(gl_Position);
+		gl_Position = (gl_in[0].gl_Position + gl_in[2].gl_Position) / 2;
+        FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
 		EmitVertex();
 
-		gl_Position = gl_in[3].gl_Position;
-		vertex_color = setColor(gl_Position);
+		gl_Position = (gl_in[1].gl_Position + gl_in[0].gl_Position) / 2;
+        FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
 		EmitVertex();
+//
 
-		gl_Position = divide(gl_in[3].gl_Position, gl_in[0].gl_Position);
-		vertex_color = setColor(gl_Position);
-		EmitVertex();
-		
-		EndPrimitive();
+//
+
+//
+
+//
+
+//
+//		
+//		EndPrimitive();
 
 }

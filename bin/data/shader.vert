@@ -7,8 +7,8 @@ layout(location = 0) in vec4 position;
 layout(location = 10) in vec4 color;
 
 in vec2 texcoord;
-out vec2 varyingtexcoord;
-out vec4 FS_in_vertexColor;
+
+out vec4 GS_in_vertexColor;
 
 void main(){
     
@@ -20,22 +20,19 @@ void main(){
     
 
 	//normalizedHeight = 1 - normalizedHeight;
-    FS_in_vertexColor = color;
-    FS_in_vertexColor = vec4(0,1,0,1);
+    GS_in_vertexColor = color;
+    GS_in_vertexColor = vec4(0,1,0,1);
     if (position.z < 0) {
         float normalizedHeightBlue = abs(position.z) / (maxHeight*lscale);
-        FS_in_vertexColor = vec4(0,0,1-normalizedHeightBlue,1);
+        GS_in_vertexColor = vec4(0,0,1-normalizedHeightBlue,1);
     }
     else {
         if (normalizedHeight > 0.8) {
-            FS_in_vertexColor = vec4(0.7*normalizedHeight,0.7*normalizedHeight,0.7*normalizedHeight,1);
+            GS_in_vertexColor = vec4(0.7*normalizedHeight,0.7*normalizedHeight,0.7*normalizedHeight,1);
         }
         else if (normalizedHeight > 0.35) {
-            FS_in_vertexColor = vec4(0.55*normalizedHeight,0.27*normalizedHeight,0.07*normalizedHeight,1);
+            GS_in_vertexColor = vec4(0.55*normalizedHeight,0.27*normalizedHeight,0.07*normalizedHeight,1);
         }
     }
-
-    
-    
     gl_Position = modelViewProjectionMatrix * position;
 }

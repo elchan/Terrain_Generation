@@ -25,6 +25,8 @@ void rotateToNormal(ofVec3f normal) {
 
 void ofApp::setup(){
 	
+    
+    secondWindow.setup("second window", 50, 50, 1024, 768, false);
 	info = false;
 	shipShade = false;
 	fontObj.loadFont("C:\\Users\\Ellison\\Documents\\Models\\orange juice 2.0.ttf", 32);
@@ -37,14 +39,15 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	// draw the vertices in pathLines as a line strip
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
-	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
-	m_terrain.load("C:\\Users\\Ellison\\Documents\\Models\\Terrain.ply");
+//	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
+	m_terrain.load("Terrain.ply");
 	//m_terrain.load("Terrain.ply");
 	//landImg.loadImage("C:\\Users\\Ellison\\Pictures\\quebec.jpg");  
-	shader.load("shader.vert", "shader.frag");
+//	shader.load("shader.vert", "shader.frag");
 	model_shader.load("modelshader.vert", "modelshader.frag");
-	terrain_shader.load("vt.vertexshader", "frag.fragmentshader","geo.geometryshader");
-	//terrain_shader.load("shader.vert", "shader.frag");
+//	terrain_shader.load("vt.vertexshader", "frag.fragmentshader"/*,"geo.geometryshader" */);
+	terrain_shader.load("shader.vert", "shader.frag", "geo.geometryshader");
+//	terrain_shader.load("shader.vert", "shader.frag");
 
 	genTerrain();
 	current.x = 0;
@@ -59,7 +62,9 @@ void ofApp::setup(){
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
 
-
+    terrain.reset();
+    
+//    m_terrain = terrain.mesh;
 	//terrain.diamondSquareIterationByIdx();
     //diamondSquare(m_terrain, landImg);
 }
@@ -216,6 +221,18 @@ void ofApp::draw(){
 	//glPolygonMode(GL_FRONT, GL_FILL);
 	myTexture.unbind();  
 	
+    light1.enable();
+    //            light2.enable();
+    //            light3.enable();
+    light1.setDirectional();
+    light1.lookAt(ofVec3f(0, 0, 0));
+    light1.setGlobalPosition(ofVec3f(0, 275, 10));
+    
+    
+//    ofSpherePrimitive sphere(5, 10);
+//    sphere.setGlobalPosition(0, 275, 10);
+
+
 	terrain_shader.begin();
     terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
     terrain_shader.setUniform1f("minHeight", terrain.minHeight);
@@ -227,7 +244,7 @@ void ofApp::draw(){
 	ofRotateY(180);
 	//terrain.draw();
 	//m_terrain.draw();
-	m_terrain.drawWireframe();
+	m_terrain.draw();
 	terrain_shader.end();
 	//ofRotateX(15);
 
@@ -261,39 +278,50 @@ void ofApp::draw(){
 		//fprintf(stderr, "Top View %2.4f %2.4f %2.4f\n", targ.getPosition().x, targ.getPosition().y, targ.getPosition().z);
 		//ofRotateY(90);
 		//ofRotateX(90);
-		//sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
- 		//sphere.draw();
-		if (drawShip)
-		{
-			
-	light1.enable();
-	light2.enable();
-	light3.enable();
-	
-			ofSetColor(255,0,0);		
-			if (shipShade)
-			{
-				ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-				model_shader.begin();
-				ofScale (10,10,10);
-				m_mesh.draw();
-				model_shader.end();
-			}
-			else
-			{
-				ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-				ofScale (10,10,10);
-				m_mesh.drawWireframe();
-			}
-			
-	light1.disable();
-	light2.disable();
-	light3.disable();
-	
-		}
+//		sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
+//        sphere.setPosition((ofVec3f(0, 275, 10)));
+// 		sphere.draw();
+        if (drawShip)
+        {
+            
+
+            
+
+
+//                ofSetColor(255,0,0);		
+//                if (shipShade)
+//                {
+//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+//                    model_shader.begin();
+//                    ofScale (10,10,10);
+//                    m_mesh.draw();
+//                    model_shader.end();
+//                }
+//                else
+//                {
+//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+//                    ofScale (10,10,10);
+//                    m_mesh.drawWireframe();
+//                }
+            
+
+
+        }
     }
 
+    light1.disable();
+//    light2.disable();
+//    light3.disable();
 	camera1.end();
+    
+    
+    secondWindow.begin();
+    ofBackground(255);
+    ofSetColor(0, 0, 255);
+    ofDrawBitmapString("this is the second window", 100, 100);
+    ofEllipse(320, 250, 200, 200);
+    secondWindow.end();
+    
 }
 
 //--------------------------------------------------------------
