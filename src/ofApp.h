@@ -18,8 +18,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		void ofApp::diamondSquare(ofMesh &mesh, ofImage &img);	
-		void ofApp::genTerrain();
+		void diamondSquare(ofMesh &mesh, ofImage &img);
+		void genTerrain();
 
 
 public:
@@ -32,8 +32,8 @@ public:
 		ofMesh m_mesh;
 		ofMesh m_terrain;
 		ofCamera camera1;
-		ofShader shader;
-		ofShader model_shader;
+//		ofShader shader;
+//		ofShader model_shader;
 		ofShader terrain_shader;
 		Terrain terrain;
 		float scale;

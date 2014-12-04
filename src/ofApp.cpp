@@ -37,14 +37,15 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	// draw the vertices in pathLines as a line strip
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
-	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
-	m_terrain.load("C:\\Users\\Ellison\\Documents\\Models\\Terrain.ply");
+//	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
+	m_terrain.load("Terrain.ply");
 	//m_terrain.load("Terrain.ply");
 	//landImg.loadImage("C:\\Users\\Ellison\\Pictures\\quebec.jpg");  
-	shader.load("shader.vert", "shader.frag");
-	model_shader.load("modelshader.vert", "modelshader.frag");
-	terrain_shader.load("vt.vertexshader", "frag.fragmentshader","geo.geometryshader");
-	//terrain_shader.load("shader.vert", "shader.frag");
+//	shader.load("shader.vert", "shader.frag");
+//	model_shader.load("modelshader.vert", "modelshader.frag");
+//	terrain_shader.load("vt.vertexshader", "frag.fragmentshader"/*,"geo.geometryshader" */);
+	terrain_shader.load("shader.vert", "shader.frag", "geo.geometryshader");
+//	terrain_shader.load("shader.vert", "shader.frag");
 
 	genTerrain();
 	current.x = 0;
@@ -59,7 +60,9 @@ void ofApp::setup(){
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
 
-
+    terrain.reset();
+    
+//    m_terrain = terrain.mesh;
 	//terrain.diamondSquareIterationByIdx();
     //diamondSquare(m_terrain, landImg);
 }
@@ -217,10 +220,10 @@ void ofApp::draw(){
 	myTexture.unbind();  
 	
 	terrain_shader.begin();
-    terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
-    terrain_shader.setUniform1f("minHeight", terrain.minHeight);
-    terrain_shader.setUniform1f("scale", scale);
-    terrain_shader.setUniform1i("tess", tess);
+//    terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
+//    terrain_shader.setUniform1f("minHeight", terrain.minHeight);
+//    terrain_shader.setUniform1f("scale", scale);
+//    terrain_shader.setUniform1i("tess", tess);
 	ofScale(scale,1.0f,scale);
 	ofRotateX(90);
 	ofTranslate(0,0,0);
@@ -263,34 +266,34 @@ void ofApp::draw(){
 		//ofRotateX(90);
 		//sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
  		//sphere.draw();
-		if (drawShip)
-		{
-			
-	light1.enable();
-	light2.enable();
-	light3.enable();
-	
-			ofSetColor(255,0,0);		
-			if (shipShade)
-			{
-				ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-				model_shader.begin();
-				ofScale (10,10,10);
-				m_mesh.draw();
-				model_shader.end();
-			}
-			else
-			{
-				ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-				ofScale (10,10,10);
-				m_mesh.drawWireframe();
-			}
-			
-	light1.disable();
-	light2.disable();
-	light3.disable();
-	
-		}
+//        if (drawShip)
+//        {
+//            
+//            light1.enable();
+//            light2.enable();
+//            light3.enable();
+//
+//                ofSetColor(255,0,0);		
+//                if (shipShade)
+//                {
+//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+//                    model_shader.begin();
+//                    ofScale (10,10,10);
+//                    m_mesh.draw();
+//                    model_shader.end();
+//                }
+//                else
+//                {
+//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+//                    ofScale (10,10,10);
+//                    m_mesh.drawWireframe();
+//                }
+//                
+//            light1.disable();
+//            light2.disable();
+//            light3.disable();
+//
+//        }
     }
 
 	camera1.end();

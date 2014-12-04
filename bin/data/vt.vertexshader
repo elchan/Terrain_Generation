@@ -1,4 +1,4 @@
-#version 410
+#version 400
 uniform float minHeight;
 uniform float maxHeight;
 uniform float scale;
