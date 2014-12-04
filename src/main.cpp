@@ -3,8 +3,11 @@
 
 //========================================================================
 int main( ){
+#ifdef __APPLE__
     ofSetOpenGLVersion(3, 3);
-//	ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+#else
+	ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+#endif
 	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
