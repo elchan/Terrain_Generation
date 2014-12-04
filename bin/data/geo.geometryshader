@@ -16,7 +16,10 @@ in VertexData {
     vec3 normal;
 } VertexIn[1];
 */
- 
+
+in vec4 GS_in_vertexColor[];
+out vec4 FS_in_vertexColor;
+
 out VertexData {
     vec2 texCoord;
     vec3 normal;
@@ -70,22 +73,27 @@ out VertexData {
 
 
 		gl_Position = gl_in[0].gl_Position;
+        FS_in_vertexColor = GS_in_vertexColor[0];
 		EmitVertex();
 
 		gl_Position = gl_in[1].gl_Position;
+        FS_in_vertexColor = GS_in_vertexColor[1];
 		EmitVertex();
         
 		gl_Position = gl_in[2].gl_Position;
+        FS_in_vertexColor = GS_in_vertexColor[2];
 		EmitVertex();
         
         gl_Position = (gl_in[2].gl_Position + gl_in[1].gl_Position) / 2;
+        FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
 		EmitVertex();
 
 		gl_Position = (gl_in[0].gl_Position + gl_in[2].gl_Position) / 2;
+        FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
 		EmitVertex();
 
 		gl_Position = (gl_in[1].gl_Position + gl_in[0].gl_Position) / 2;
-		//vertex_color = setColor(gl_Position);
+        FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
 		EmitVertex();
 //
 

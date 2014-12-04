@@ -219,11 +219,18 @@ void ofApp::draw(){
 	//glPolygonMode(GL_FRONT, GL_FILL);
 	myTexture.unbind();  
 	
+    light1.enable();
+    //            light2.enable();
+    //            light3.enable();
+    light1.setDirectional();
+    light1.lookAt(ofVec3f(0, 0, 0));
+    light1.setGlobalPosition(ofVec3f(0, 0, 10));
+
 	terrain_shader.begin();
-//    terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
-//    terrain_shader.setUniform1f("minHeight", terrain.minHeight);
-//    terrain_shader.setUniform1f("scale", scale);
-//    terrain_shader.setUniform1i("tess", tess);
+    terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
+    terrain_shader.setUniform1f("minHeight", terrain.minHeight);
+    terrain_shader.setUniform1f("scale", scale);
+    terrain_shader.setUniform1i("tess", tess);
 	ofScale(scale,1.0f,scale);
 	ofRotateX(90);
 	ofTranslate(0,0,0);
@@ -266,13 +273,13 @@ void ofApp::draw(){
 		//ofRotateX(90);
 		//sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
  		//sphere.draw();
-//        if (drawShip)
-//        {
-//            
-//            light1.enable();
-//            light2.enable();
-//            light3.enable();
-//
+        if (drawShip)
+        {
+            
+
+            
+
+
 //                ofSetColor(255,0,0);		
 //                if (shipShade)
 //                {
@@ -288,14 +295,15 @@ void ofApp::draw(){
 //                    ofScale (10,10,10);
 //                    m_mesh.drawWireframe();
 //                }
-//                
-//            light1.disable();
-//            light2.disable();
-//            light3.disable();
-//
-//        }
+            
+
+
+        }
     }
 
+    light1.disable();
+//    light2.disable();
+//    light3.disable();
 	camera1.end();
 }
 

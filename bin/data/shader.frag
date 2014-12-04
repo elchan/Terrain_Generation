@@ -2,7 +2,7 @@
 
 #version 400
 
-//in vec4 FS_in_vertexColor;
+in vec4 FS_in_vertexColor;
 out vec4 outputColor;
 uniform sampler2DRect tex0;
 
@@ -21,7 +21,7 @@ void main()
 //    float b = 1.0;
 //    float a = 1.0;
 //    outputColor = vec4(r, g, b, a);
-	outputColor = vec4(1,1,1,1);
-   // outputColor = FS_in_vertexColor;
+//	outputColor = vec4(1,1,1,1);
+    outputColor = FS_in_vertexColor;
 	//outputColor = texture(tex0,vec2(1,1);
 }
