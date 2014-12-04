@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 out vec3 N; // normal  
 out vec3 v; // view  

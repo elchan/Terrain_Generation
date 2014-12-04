@@ -1,4 +1,4 @@
-#version 120
+#version 150
 
 in vec3 N;  
 in vec3 v;   

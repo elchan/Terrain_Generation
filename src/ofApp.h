@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ofxSecondWindow.h"
 #include "ofMain.h"
 #include "Terrain.hpp"
 
@@ -23,7 +24,8 @@ class ofApp : public ofBaseApp{
 
 
 public:
-		ofImage landImg;  
+    ofxSecondWindow secondWindow;
+		ofImage landImg;
 		ofVec3f previous, current, target;
 		ofEasyCam easyCam;		
 		ofCamera fullCamera;
@@ -33,7 +35,7 @@ public:
 		ofMesh m_terrain;
 		ofCamera camera1;
 //		ofShader shader;
-//		ofShader model_shader;
+		ofShader model_shader;
 		ofShader terrain_shader;
 		Terrain terrain;
 		float scale;
