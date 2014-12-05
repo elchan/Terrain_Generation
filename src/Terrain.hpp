@@ -194,15 +194,15 @@ struct Terrain {
 //            }
 //        }
 //        std::cout << "Red: " << red << " Green: " << green << " Blue: " << blue << std::endl;
-        vbo.clear(); // clear what is in the GPU
-        vbo.setMesh(mesh, GL_STATIC_DRAW);
+        //vbo.clear(); // clear what is in the GPU
+        //vbo.setMesh(mesh, GL_STATIC_DRAW);
         std::cout << "Diamond Square iterations: " << iterations << " resulted in " << mesh.getNumVertices() << " vertices, " << mesh.getNumIndices() / 4 << " quads" << std::endl;
         std::cout << "MinHeight: " << minHeight << " MaxHeight: " << maxHeight << std::endl;
         
     }
     
     void save() {
-        mesh.save("Terrain.ply");
+        mesh.save("./NewTerrain.ply");
     }
     
     void load() {

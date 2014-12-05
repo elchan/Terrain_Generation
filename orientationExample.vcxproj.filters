@@ -13,6 +13,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Shaders">
+      <UniqueIdentifier>{ecd56c09-ce41-4dc6-8ff4-468bd2467c36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -24,18 +27,20 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\data\shader.frag">
-      <Filter>src</Filter>
-    </None>
-    <None Include="bin\data\shader.vert">
-      <Filter>src</Filter>
-    </None>
     <None Include="bin\data\modelshader.frag" />
     <None Include="bin\data\modelshader.vert" />
     <None Include="bin\data\tessctrl.tesscontrolshader" />
     <None Include="bin\data\tesseval.tessevalshader" />
     <None Include="bin\data\frag.fragmentshader" />
-    <None Include="bin\data\geo.geometryshader" />
     <None Include="bin\data\vt.vertexshader" />
+    <None Include="bin\data\geo.geometryshader">
+      <Filter>src\Shaders</Filter>
+    </None>
+    <None Include="bin\data\shader.frag">
+      <Filter>src\Shaders</Filter>
+    </None>
+    <None Include="bin\data\shader.vert">
+      <Filter>src\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

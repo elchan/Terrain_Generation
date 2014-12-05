@@ -25,8 +25,7 @@ void rotateToNormal(ofVec3f normal) {
 
 void ofApp::setup(){
 	
-    
-    secondWindow.setup("second window", 50, 50, 1024, 768, false);
+	mode = 0;
 	info = false;
 	shipShade = false;
 	fontObj.loadFont("C:\\Users\\Ellison\\Documents\\Models\\orange juice 2.0.ttf", 32);
@@ -37,25 +36,30 @@ void ofApp::setup(){
 	tess = 1;
 	topView = true;
 	ofSetVerticalSync(true);
+	wireframemode = false;
 	// draw the vertices in pathLines as a line strip
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
+	genTerrain();
 //	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
 	m_terrain.load("Terrain.ply");
 	//m_terrain.load("Terrain.ply");
 	//landImg.loadImage("C:\\Users\\Ellison\\Pictures\\quebec.jpg");  
 //	shader.load("shader.vert", "shader.frag");
-	model_shader.load("modelshader.vert", "modelshader.frag");
+//	model_shader.load("modelshader.vert", "modelshader.frag");
 //	terrain_shader.load("vt.vertexshader", "frag.fragmentshader"/*,"geo.geometryshader" */);
 	terrain_shader.load("shader.vert", "shader.frag", "geo.geometryshader");
 //	terrain_shader.load("shader.vert", "shader.frag");
 
-	genTerrain();
-	current.x = 0;
-	current.z = 0;
-	current.y =  terrain.maxHeight + defaultHeight;
-	target = ofVec3f(0,0,0);
+	light1_current_position = ofVec3f( 10.f ,0.f , 0.f );
 
-	myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
+	current.x = 0;
+	current.y = -275;
+	current.z = 20;//terrain.maxHeight + defaultHeight;;
+
+	camera1.setGlobalPosition((ofVec3f(current.x, current.y, current.z)));
+	camera1.lookAt(ofVec3f(0, 0, 0));
+	target = ofVec3f(0,0,0);
+	//myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
 	myTexture = myImage.getTextureReference();  
 
    	ofSetVerticalSync(true);
@@ -63,8 +67,16 @@ void ofApp::setup(){
 	easyCam.setDistance(100);
 
     terrain.reset();
+	//terrain.diamondSquareIterationByIdx();
+	for (auto & vertex : terrain.mesh.getVertices()) {
+		vertex.z = 0;
+	}
     
-//    m_terrain = terrain.mesh;
+	for (auto & vertex : terrain.mesh.getVertices()) {
+		terrain.mesh.addNormal(ofVec3f(0, 0, 1));
+	}
+	//terrain.mesh.enableNormals();
+    //m_terrain = terrain.mesh;
 	//terrain.diamondSquareIterationByIdx();
     //diamondSquare(m_terrain, landImg);
 }
@@ -75,6 +87,8 @@ void ofApp::genTerrain()
 	{
 		terrain.diamondSquareIterationByIdx();
 	}
+
+	terrain.save();
 }
 
 /*
@@ -157,45 +171,48 @@ void ofApp::update(){
 	current.y = 0;
 	current.z = 45;
 	*/
-	previous = current;
-	
-	
-	// generate a noisy 3d position over time 
-	
-	float t = (2 + ofGetElapsedTimef()) * .1;
-	/*
-	current.x = ofSignedNoise(t, 0, 0);
-	current.y = ofSignedNoise(0, t, 0);
-	current.z = ofSignedNoise(0, 0, 5);
-	current *= 550*scale; // scale from -1,+1 range to -400,+400
-	*/
-	
-	
-	/*
-	current.x+=t;
-	current *= 550*scale; // scale from -1,+1 range to -400,+400
-	*/
+	//previous = current;
+	//
+	//
+	//// generate a noisy 3d position over time 
+	//
+	//float t = (2 + ofGetElapsedTimef()) * .1;
+	///*
+	//current.x = ofSignedNoise(t, 0, 0);
+	//current.y = ofSignedNoise(0, t, 0);
+	//current.z = ofSignedNoise(0, 0, 5);
+	//current *= 550*scale; // scale from -1,+1 range to -400,+400
+	//*/
+	//
+	//
+	///*
+	//current.x+=t;
+	//current *= 550*scale; // scale from -1,+1 range to -400,+400
+	//*/
 
-	if (abs(current.x) > 550*scale) current.x = 0;
+	//if (abs(current.x) > 550*scale) current.x = 0;
 
-	// add the current position to the pathVertices deque
-	pathVertices.push_back(current);
-	// if we have too many vertices in the deque, get rid of the oldest ones
-	while(pathVertices.size() > 200) {
-		pathVertices.pop_front();
-	}
+	//// add the current position to the pathVertices deque
+	//pathVertices.push_back(current);
+	//// if we have too many vertices in the deque, get rid of the oldest ones
+	//while(pathVertices.size() > 200) {
+	//	pathVertices.pop_front();
+	//}
 	// clear the pathLines ofMesh from any old vertices
-	pathLines.clear();
-	// add all the vertices from pathVertices
-	for(unsigned int i = 0; i < pathVertices.size(); i++) {
-		pathLines.addVertex(pathVertices[i]);
-	}
+	//pathLines.clear();
+	//// add all the vertices from pathVertices
+	//for(unsigned int i = 0; i < pathVertices.size(); i++) {
+	//	pathLines.addVertex(pathVertices[i]);
+	//}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	//glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glShadeModel ( GL_SMOOTH ) ;
+	glFrontFace(GL_CW);
+	//glEnable(GL_COLOR_MATERIAL) ;
 
 	if (info)
 	{
@@ -213,8 +230,11 @@ void ofApp::draw(){
 	ofNoFill();
 
 	//camera1.setVFlip(true);
-	camera1.setPosition((ofVec3f(current.x, current.y, current.z)));
-	camera1.lookAt(ofVec3f(current.x, current.y+target.y, current.z+(zoff)));
+
+//	camera1.
+//	camera1.setPosition((ofVec3f(0, -275, 140)));
+
+	//camera1.lookAt(ofVec3f(current.x, current.y+target.y, current.z+(zoff)));
 
 	camera1.begin();
 	//ofTranslate(current.x, current.y, current.z);
@@ -222,15 +242,24 @@ void ofApp::draw(){
 	myTexture.unbind();  
 	
     light1.enable();
-    //            light2.enable();
-    //            light3.enable();
-    light1.setDirectional();
-    light1.lookAt(ofVec3f(0, 0, 0));
-    light1.setGlobalPosition(ofVec3f(0, 275, 10));
-    
-    
-//    ofSpherePrimitive sphere(5, 10);
-//    sphere.setGlobalPosition(0, 275, 10);
+    //light2.enable();
+    //light3.enable();
+    //light1.setDirectional();
+   // light1.lookAt(ofVec3f(0, 0, 0));
+	light1.setPosition(0, 275, 50);
+
+   // light1.setGlobalPosition(light1_current_position);
+	light1.setDiffuseColor(ofFloatColor(1.f , 1.f , 1.f));
+	light1.setAttenuation(0.f , 0.f, 0.f );
+
+	//a sphere as the light source
+	ligthBulb.setPosition (light1.getPosition());
+	ligthBulb.setRadius(10.f);
+	ligthBulb.enableColors();
+	ligthBulb.draw();
+
+	ofMatrix4x4 cameraViewMatrix;
+	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
 
 
 	terrain_shader.begin();
@@ -238,13 +267,36 @@ void ofApp::draw(){
     terrain_shader.setUniform1f("minHeight", terrain.minHeight);
     terrain_shader.setUniform1f("scale", scale);
     terrain_shader.setUniform1i("tess", tess);
+		terrain_shader.setUniform1i("tessLevel", tessLevel);
+	terrain_shader.setUniform1f("far",camera1.getFarClip());
+	terrain_shader.setUniform1f("near",camera1.getNearClip());
+	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
+	float position[3];
+	ofVec3f posvec = camera1.getPosition();
+	position[0] = posvec.x;
+	position[1] = posvec.y;
+	position[2] = posvec.z;
+	terrain_shader.setUniform3fv("camLoc",position,1);
+
+
+
+	//Light
+	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);
+
 	ofScale(scale,1.0f,scale);
-	ofRotateX(90);
-	ofTranslate(0,0,0);
-	ofRotateY(180);
+	//ofRotateX(90);
+	//ofTranslate(0,0,0);
+	//ofRotateY(180);
 	//terrain.draw();
-	//m_terrain.draw();
-	m_terrain.draw();
+	if (wireframemode)
+	{
+		m_terrain.drawWireframe();
+	}
+	else
+	{
+		m_terrain.draw();
+	}
+	//m_terrain.drawWireframe();
 	terrain_shader.end();
 	//ofRotateX(15);
 
@@ -278,9 +330,8 @@ void ofApp::draw(){
 		//fprintf(stderr, "Top View %2.4f %2.4f %2.4f\n", targ.getPosition().x, targ.getPosition().y, targ.getPosition().z);
 		//ofRotateY(90);
 		//ofRotateX(90);
-//		sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
-//        sphere.setPosition((ofVec3f(0, 275, 10)));
-// 		sphere.draw();
+		//sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
+ 		//sphere.draw();
         if (drawShip)
         {
             
@@ -313,50 +364,83 @@ void ofApp::draw(){
 //    light2.disable();
 //    light3.disable();
 	camera1.end();
-    
-    
-    secondWindow.begin();
-    ofBackground(255);
-    ofSetColor(0, 0, 255);
-    ofDrawBitmapString("this is the second window", 100, 100);
-    ofEllipse(320, 250, 200, 200);
-    secondWindow.end();
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
 	float posInc = 10.0f;
 	switch (key)
 	{
 		case OF_KEY_RIGHT:
-			current.x+=posInc;
-			fprintf(stderr, "Right key pressed. %2.4f\n", current.x);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.x+=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
 		case OF_KEY_LEFT:
-			current.x-=posInc;
-			fprintf(stderr, "Left key pressed. %2.4f\n", current.x);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.x-=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
 		case OF_KEY_UP:
-			current.y+=posInc;
-			fprintf(stderr, "Up key pressed. %2.4f\n", current.y);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.y+=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
 		case OF_KEY_DOWN:
-			current.y-=posInc;
-			fprintf(stderr, "Down key pressed. %2.4f\n", current.y);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.y-=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
 		case OF_KEY_PAGE_UP:
-			current.z-=posInc;
-			fprintf(stderr, "PageUp key pressed. %2.4f\n", current.z);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.z+=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
 		case OF_KEY_PAGE_DOWN:
-			current.z+=posInc;
-			fprintf(stderr, "PageDown key pressed. %2.4f\n", current.z);
-			break;
+			{
+				auto pos = camera1.getPosition();
+				pos.z-=posInc;
+				camera1.setPosition(pos);
+				break;
+			}
+		case OF_KEY_HOME :
+			{
+				camera1.rotate(10, 0, 0, 1);
+				break;
+			}
+
+		case OF_KEY_END :
+			{
+				camera1.rotate(-10, 0, 0, 1);
+				break;
+			}
+
 		case 'w':
-			terrain.setMode();
-			fprintf(stderr, "Wireframe\n");
+			{
+				string wfmode ="";
+				terrain.setMode();
+				if (wireframemode == false)
+				{
+					wireframemode = true;
+					wfmode = "Wireframe ON";
+				}
+				else
+				{
+					wireframemode = false;
+					wfmode = "Wireframe OFF";
+				}
+				fprintf(stderr, "%s\n", wfmode);
+			}
 			break;
 		case 't':
 			if (topView)
@@ -382,9 +466,12 @@ void ofApp::keyPressed(int key){
 			fprintf(stderr, "Target Y: %2.4f\n", target.y);
 			break;
 		case 'r':
+			/*
 			terrain.reset();
 			genTerrain();
+			m_terrain.load("Terrain.ply");
 			fprintf(stderr, "Terrain reset\n");
+			*/
 			break;
 		case 's':
 			drawShip = !drawShip;
@@ -407,6 +494,36 @@ void ofApp::keyPressed(int key){
 				fprintf(stderr, "Tessellation ON\n");
 			}
 			break;
+			/*
+		case '0':
+			mode = 0;
+			break;
+
+		case '1':
+			mode = 1;
+			break;
+			*/
+		case '0':
+			tessLevel = 0;
+			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+		case '1':
+			tessLevel = 1;
+			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+		case '2':
+			tessLevel = 2;
+			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+		case '3':
+			tessLevel = 3;
+			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+		case '4':
+			tessLevel = 4;
+			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+
 
 	}
 }

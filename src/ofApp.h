@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ofxSecondWindow.h"
 #include "ofMain.h"
 #include "Terrain.hpp"
 
@@ -24,8 +23,7 @@ class ofApp : public ofBaseApp{
 
 
 public:
-    ofxSecondWindow secondWindow;
-		ofImage landImg;
+		ofImage landImg;  
 		ofVec3f previous, current, target;
 		ofEasyCam easyCam;		
 		ofCamera fullCamera;
@@ -49,12 +47,21 @@ public:
 		bool info;
 		bool shipShade;
 		ofLight light1;
+		ofVec3f light1_current_position;
 		ofLight light2;
 		ofLight light3;
+		ofIcoSpherePrimitive ligthBulb;
 		int tess;
 //		ofMesh m_mesh;
 //		ofMesh m_terrain;
 		ofVbo m_vbo;
 		ofVboMesh m_vbomesh;
+		GLint tessellatemode;
+		GLint tessLevel;
+		GLfloat nearClip;
+		GLfloat farClip;
+		GLfloat imgPlane;
+		bool wireframemode;
+		int mode;
 
 };
