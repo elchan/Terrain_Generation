@@ -10,15 +10,14 @@ uniform float imgPlane;
 uniform vec3 camLoc;
 uniform int poly;
 
-<<<<<<< HEAD
+
 //uniform mat4 tesselationCamMVP;
 
 
 
 //layout(location = 0) in vec4 position;
 //layout(location = 10) in vec4 color;
-=======
->>>>>>> bb57f73a51302262cd97132ceb3a59c1678bd070
+
 
 in vec2 vs_texcoord[];
 in float vs_lightIntensity[];
