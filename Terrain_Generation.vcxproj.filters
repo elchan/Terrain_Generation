@@ -33,6 +33,9 @@
     <Filter Include="addons\ofxSecondWindow\src">
       <UniqueIdentifier>{6050116F-19A0-55CE-4D17-CD86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Shader">
+      <UniqueIdentifier>{1d7b29b4-e69a-4723-a493-3b875c278baf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -53,5 +56,16 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\geo.geometryshader">
+      <Filter>src\Shader</Filter>
+    </None>
+    <None Include="bin\data\shader.frag">
+      <Filter>src\Shader</Filter>
+    </None>
+    <None Include="bin\data\shader.vert">
+      <Filter>src\Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

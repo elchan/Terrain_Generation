@@ -255,16 +255,13 @@ void ofApp::draw(){
 	
 	
     light1.enable();
-<<<<<<< HEAD
-	light1.setPosition(0, 275, 50);
-=======
+
     //light2.enable();
     //light3.enable();
     //light1.setDirectional();
    // light1.lookAt(ofVec3f(0, 0, 0));
 	if ( angle >= 2*3.14159) angle = 0;
 	light1.setPosition(0, 180*abs(cos(angle+=0.001)), terrain.maxHeight*3*abs(sin(angle+=0.001)));
->>>>>>> 84b581a9f6f97c4b940b5e1411729b38d6385110
 
    // light1.setGlobalPosition(light1_current_position);
 	light1.setDiffuseColor(ofFloatColor(1.f , 1.f , 1.f));
@@ -313,14 +310,10 @@ void ofApp::draw(){
 	//ofTranslate(0,0,0);
 	//ofRotateY(180);
 	//terrain.draw();
-<<<<<<< HEAD
-	
-	terrain.draw(wireframemode);
-=======
 	myImage.bind();
   terrain.draw(wireframemode);
   myImage.unbind();
->>>>>>> 84b581a9f6f97c4b940b5e1411729b38d6385110
+
 //	if (wireframemode)
 //	{
 //		m_terrain.drawWireframe();

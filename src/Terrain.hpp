@@ -77,6 +77,11 @@ struct Terrain {
 
         vbo.clear(); // clear what is in the GPU
         vbo.setMesh(mesh, GL_STATIC_DRAW);
+
+		maxX = unit/2;
+		minX = -unit/2;
+		maxY = unit/2;
+		minY = -unit/2;	
     }
     
     void draw() {
@@ -179,6 +184,8 @@ struct Terrain {
     }
     
   }
+  
+  
     
     float randomValue() const {
         return std::rand() % 2 == 0 ? unit * kModifier : - unit * kModifier;
@@ -199,6 +206,12 @@ struct Terrain {
 	{
 		return (v1-center).getCrossed((v2-center));
 	}
+
+	float maxX;
+	float minX;
+	float maxY;
+	float minY;
+
     ofMesh mesh;
     ofVbo vbo;
 private:
