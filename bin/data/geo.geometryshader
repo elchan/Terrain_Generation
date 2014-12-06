@@ -10,12 +10,15 @@ uniform float imgPlane;
 uniform vec3 camLoc;
 uniform int poly;
 
+<<<<<<< HEAD
 //uniform mat4 tesselationCamMVP;
 
 
 
 //layout(location = 0) in vec4 position;
 //layout(location = 10) in vec4 color;
+=======
+>>>>>>> bb57f73a51302262cd97132ceb3a59c1678bd070
 
 in vec2 vs_texcoord[];
 in float vs_lightIntensity[];
@@ -26,40 +29,6 @@ out float gs_lightIntensity;
 layout(triangles) in;
 layout (triangle_strip, max_vertices=128) out;
 
-
-in vec4 GS_in_vertexColor[];
-out vec4 FS_in_vertexColor;
-
- //out vec4 vertex_color;
-
- /*vec4 setColor(vec4 position)
- {
-	vec4 FS_in_vertexColor;
-
- 	float lscale = 1.0;
-    float offset = position.z - minHeight*lscale;
-    float heightDelta = maxHeight - minHeight*lscale;
-    float normalizedOffset = offset / heightDelta;
-    float normalizedHeight = position.z / (maxHeight*lscale);
-    
-
-	//normalizedHeight = 1 - normalizedHeight;
-    FS_in_vertexColor = vec4(0,1,0,1);
-    if (position.z < 0) {
-        float normalizedHeightBlue = abs(position.z) / (maxHeight*lscale);
-        FS_in_vertexColor = vec4(0,0,1-normalizedHeightBlue,1);
-    }
-    else {
-        if (normalizedHeight > 0.8) {
-            FS_in_vertexColor = vec4(0.7*normalizedHeight,0.7*normalizedHeight,0.7*normalizedHeight,1);
-        }
-        else if (normalizedHeight > 0.35) {
-            FS_in_vertexColor = vec4(0.55*normalizedHeight,0.27*normalizedHeight,0.07*normalizedHeight,1);
-        }
-    }
-
-	return FS_in_vertexColor;
- }*/
 
  vec4 divide (vec4 v1, vec4 v2)
  {
@@ -91,27 +60,33 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			
 
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();        
         
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
  }
@@ -123,27 +98,33 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			
@@ -161,27 +142,33 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			tessellate2(v0, np2, np1,0,0);
@@ -198,27 +185,33 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			tessellate3(v0, np2, np1,0,0);
@@ -235,27 +228,33 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 
 			
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
  }
 
@@ -266,27 +265,33 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 			
 			tessellate1(v0,np2,np1,0,0);
@@ -303,27 +308,34 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
+
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			tessellate2(v0, np2, np1,0,0);
@@ -340,27 +352,33 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			vec4 np2 = divide(v1,v0);
 
  			gl_Position = v0;
-			FS_in_vertexColor = GS_in_vertexColor[0];
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
 			EmitVertex();
 
 			gl_Position = v1;
-			FS_in_vertexColor = GS_in_vertexColor[1];
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
 			EmitVertex();
         
 			gl_Position = v2;
-			FS_in_vertexColor = GS_in_vertexColor[2];
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
 			EmitVertex();
         
 			gl_Position = np0;
-			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np1;
-			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
-			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
 			EmitVertex();
 
 			tessellate3(v0, np2, np1,0,0);
@@ -377,14 +395,10 @@ void noTess()
 		gl_Position = gl_in[i].gl_Position;
 		gs_texcoord = vs_texcoord[i] ; 
 		gs_lightIntensity = vs_lightIntensity[i] ; 
-		FS_in_vertexColor = GS_in_vertexColor[i];
 		EmitVertex();
 	}
 }
 
-void checkRange(in vec4 p0, in vec4 p1, in vec4 p2)
-{
-}
 
  void main()
 {

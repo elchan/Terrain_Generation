@@ -16,9 +16,6 @@ in vec2 texcoord;
 layout(location = 10) in vec4 color;
 
 
-
-out vec4 GS_in_vertexColor;
-
 out vec2 vs_texcoord;
 out float vs_lightIntensity;
 
@@ -41,9 +38,6 @@ void main(){
 
 	vec3 light_direction = normalize(light_camera_space.xyz - position_camera_space.xyz);
 	float light_intensity = dot(light_direction, normal_camera_space);
-	
-
-	GS_in_vertexColor = vec4 ((GS_in_vertexColor * light_intensity).xyz , 1. ) ;
 	
 	vs_texcoord = texcoord;
 	vs_lightIntensity = light_intensity;
