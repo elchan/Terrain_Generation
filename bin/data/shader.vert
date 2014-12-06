@@ -12,11 +12,13 @@ uniform vec3 LightPosition ;
 
 layout(location = 0) in vec4 position;
 in vec3 normal;
+in vec2 texcoord;
 layout(location = 10) in vec4 color;
 
-in vec2 texcoord;
+
 
 out vec4 GS_in_vertexColor;
+out vec2 vs_texcoord;
 //out vec4 FS_in_vertexColor;
 
 void main(){
@@ -56,6 +58,7 @@ void main(){
 	
 
 	GS_in_vertexColor = vec4 ((GS_in_vertexColor * light_intensity).xyz , 1. ) ;
+	vs_texcoord = texcoord;
 
 	//FS_in_vertexColor = GS_in_vertexColor;
     gl_Position = modelViewProjectionMatrix * position;

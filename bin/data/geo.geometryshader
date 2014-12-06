@@ -11,24 +11,16 @@ uniform vec3 camLoc;
 
 //layout(location = 0) in vec4 position;
 //layout(location = 10) in vec4 color;
- 
+
+in vec2 vs_texcoord[];
+out vec2 gs_texcoord;
+
 layout(triangles) in;
 layout (triangle_strip, max_vertices=128) out;
 
-/* 
-in VertexData {
-    vec2 texCoord;
-    vec3 normal;
-} VertexIn[1];
-*/
 
 in vec4 GS_in_vertexColor[];
 out vec4 FS_in_vertexColor;
-
-out VertexData {
-    vec2 texCoord;
-    vec3 normal;
-} VertexOut;
 
  //out vec4 vertex_color;
 
@@ -215,6 +207,7 @@ void noTess()
 	for (int i=0; i< gl_in.length(); i++)
 	{
 		gl_Position = gl_in[i].gl_Position;
+		gs_texcoord = vs_texcoord[i] ; 
 		FS_in_vertexColor = GS_in_vertexColor[i];
 		EmitVertex();
 	}

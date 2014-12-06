@@ -139,7 +139,7 @@ struct Terrain {
         }
 
         std::cout << "Diamond Square iterations: " << iterations << " resulted in " << mesh.getNumVertices() << " vertices, " << mesh.getNumIndices() / 4 << " quads" << std::endl;
-      generateVertexNormal(mesh);
+     // generateVertexNormal(mesh);
       updateTexCoordinates();
         std::cout << "MinHeight: " << minHeight << " MaxHeight: " << maxHeight << std::endl;
         

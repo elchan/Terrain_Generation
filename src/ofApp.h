@@ -56,6 +56,7 @@ public:
 //		ofMesh m_terrain;
 		ofVbo m_vbo;
 		ofVboMesh m_vbomesh;
+		ofFbo fbo;
 		GLint tessellatemode;
 		GLint tessLevel;
 		GLfloat nearClip;

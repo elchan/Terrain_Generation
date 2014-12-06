@@ -43,13 +43,22 @@ void ofApp::setup(){
 //	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
 	m_terrain.load("NewTerrain.ply");
 	//m_terrain.load("Terrain.ply");
-	//landImg.loadImage("C:\\Users\\Ellison\\Pictures\\quebec.jpg");  
+	  
 //	shader.load("shader.vert", "shader.frag");
 //	model_shader.load("modelshader.vert", "modelshader.frag");
 //	terrain_shader.load("vt.vertexshader", "frag.fragmentshader"/*,"geo.geometryshader" */);
 	terrain_shader.load("shader.vert", "shader.frag", "geo.geometryshader");
 //	terrain_shader.load("shader.vert", "shader.frag");
 
+	tessLevel = 0;
+	//texture
+	landImg.loadImage("texture2.jpg");
+	//fbo.allocate(1024 , 1024);
+	//fbo.begin();
+	//ofClear(255,255,255, 0);
+	//fbo.end();
+	myTexture =landImg.getTextureReference();  
+	
 	light1_current_position = ofVec3f( 10.f ,0.f , 0.f );
 
 	current.x = 0;
@@ -60,7 +69,7 @@ void ofApp::setup(){
 	camera1.lookAt(ofVec3f(0, 0, 0));
 	target = ofVec3f(0,0,0);
 	//myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
-	myTexture = myImage.getTextureReference();  
+	
 
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
@@ -216,6 +225,7 @@ void ofApp::draw(){
 	glFrontFace(GL_CW);
 	//glEnable(GL_COLOR_MATERIAL) ;
 
+	
 	if (info)
 	{
 		char str[255];
@@ -232,8 +242,6 @@ void ofApp::draw(){
 	ofNoFill();
 
 	//camera1.setVFlip(true);
-
-//	camera1.
 //	camera1.setPosition((ofVec3f(0, -275, 140)));
 
 	//camera1.lookAt(ofVec3f(current.x, current.y+target.y, current.z+(zoff)));
@@ -241,13 +249,13 @@ void ofApp::draw(){
 	camera1.begin();
 	//ofTranslate(current.x, current.y, current.z);
 	//glPolygonMode(GL_FRONT, GL_FILL);
-	myTexture.unbind();  
+	//myTexture.unbind();  
+
+	ofPushMatrix();
+	//ofTranslate(ofGetWidth() /2 , ofGetHeight() /2 , 0 ) ;
+	
 	
     light1.enable();
-    //light2.enable();
-    //light3.enable();
-    //light1.setDirectional();
-   // light1.lookAt(ofVec3f(0, 0, 0));
 	light1.setPosition(0, 275, 50);
 
    // light1.setGlobalPosition(light1_current_position);
@@ -262,14 +270,19 @@ void ofApp::draw(){
 
 	ofMatrix4x4 cameraViewMatrix;
 	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
+	
+	//landImg.bind();
+	
 
-
+   
 	terrain_shader.begin();
+	myTexture.bind();
+	terrain_shader.setUniformTexture("tex0", myTexture, 1);
     terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
     terrain_shader.setUniform1f("minHeight", terrain.minHeight);
     terrain_shader.setUniform1f("scale", scale);
     terrain_shader.setUniform1i("tess", tess);
-		terrain_shader.setUniform1i("tessLevel", tessLevel);
+	terrain_shader.setUniform1i("tessLevel", tessLevel);
 	terrain_shader.setUniform1f("far",camera1.getFarClip());
 	terrain_shader.setUniform1f("near",camera1.getNearClip());
 	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
@@ -290,7 +303,8 @@ void ofApp::draw(){
 	//ofTranslate(0,0,0);
 	//ofRotateY(180);
 	//terrain.draw();
-  terrain.draw(wireframemode);
+	
+	terrain.draw(wireframemode);
 //	if (wireframemode)
 //	{
 //		m_terrain.drawWireframe();
@@ -300,7 +314,10 @@ void ofApp::draw(){
 //		m_terrain.draw();
 //	}
 	//m_terrain.drawWireframe();
+
 	terrain_shader.end();
+	myTexture.unbind();
+	ofPopMatrix();
 	//ofRotateX(15);
 
 	//ofSetColor(255);
