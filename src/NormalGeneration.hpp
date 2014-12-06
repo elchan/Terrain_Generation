@@ -16,7 +16,7 @@ struct Triangle {
     }
     
     ofVec3f normal() const {
-      // clock wise order (maybe? anyway we could check? 
+      // clock wise order 
         return (get(2) - get(0)).cross((get(1) - get(0))).normalize();
     }
     
