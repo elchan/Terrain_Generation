@@ -137,41 +137,10 @@ struct Terrain {
             addQuad(botMidIdx, middlePointIdx, rightMidIdx, bottomRightIdx);
             
         }
-        
 
-      
-        
-        
-//        int red = 0, green = 0, blue = 0;
-
-//        glm::vec3 red(1.f, 0.f, 0.f);
-//        glm::vec3 green(0.f, 1.f, 0.f);
-//        glm::vec3 blue(0.f, 0.f, 1.f);
-//        colors.clear();
-//        for (auto & vec : mesh.getVertices()) {
-////            applyElevationFunction(vec);
-//            float offset = vec[2] - minHeight;
-//            float heightDelta = maxHeight - minHeight;
-//            float normalizedOffset = offset / heightDelta;
-////            std::cout << "Z value: " << vec[2] << " delta " << heightDelta << " normalizedOffSet " << normalizedOffset << std::endl;
-//            if (normalizedOffset < 0.333) {
-//                colors.push_back(ofVec4f(0, 0, 1, 1));
-////                colors.push_back(0);
-////                colors.push_back(1);
-//            }
-//            else {
-//                if (normalizedOffset < 0.7) {
-//                colors.push_back(ofVec4f(0, 1, 0, 1));
-//                } else {
-//                colors.push_back(ofVec4f(1, 0, 0, 1));
-//                }
-//            }
-//        }
-//        std::cout << "Red: " << red << " Green: " << green << " Blue: " << blue << std::endl;
-        //vbo.clear(); // clear what is in the GPU
-        //vbo.setMesh(mesh, GL_STATIC_DRAW);
         std::cout << "Diamond Square iterations: " << iterations << " resulted in " << mesh.getNumVertices() << " vertices, " << mesh.getNumIndices() / 4 << " quads" << std::endl;
       generateVertexNormal(mesh);
+      updateTexCoordinates();
         std::cout << "MinHeight: " << minHeight << " MaxHeight: " << maxHeight << std::endl;
         
     }
@@ -201,6 +170,15 @@ struct Terrain {
             diamondSquareIterationByIdx();
         }
     }
+  
+  void updateTexCoordinates() {
+    mesh.clearTexCoords();
+    auto bottomLeft = ofVec2f(-unit/2.f, -unit/2.f);
+    for (auto & vertex : mesh.getVertices()) {
+      mesh.addTexCoord(ofVec2f((vertex.x-bottomLeft.x)/unit, (vertex.y-bottomLeft.y)/unit));
+    }
+    
+  }
     
     float randomValue() const {
         return std::rand() % 2 == 0 ? unit * kModifier : - unit * kModifier;
@@ -294,12 +272,6 @@ private:
         }
 
     }
-
-   
-    
-
-  
-    
 };
 
 #endif /* defined(__quaternionArcballExample__ofTerrain__) */
