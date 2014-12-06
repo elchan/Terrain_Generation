@@ -41,7 +41,7 @@ void ofApp::setup(){
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
 	genTerrain();
 //	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
-	m_terrain.load("Terrain.ply");
+	m_terrain.load("NewTerrain.ply");
 	//m_terrain.load("Terrain.ply");
 	//landImg.loadImage("C:\\Users\\Ellison\\Pictures\\quebec.jpg");  
 //	shader.load("shader.vert", "shader.frag");
@@ -283,19 +283,20 @@ void ofApp::draw(){
 	//Light
 	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);
 
-	ofScale(scale,1.0f,scale);
+//	ofScale(scale,1.0f,scale);
 	//ofRotateX(90);
 	//ofTranslate(0,0,0);
 	//ofRotateY(180);
 	//terrain.draw();
-	if (wireframemode)
-	{
-		m_terrain.drawWireframe();
-	}
-	else
-	{
-		m_terrain.draw();
-	}
+  terrain.draw(wireframemode);
+//	if (wireframemode)
+//	{
+//		m_terrain.drawWireframe();
+//	}
+//	else
+//	{
+//		m_terrain.draw();
+//	}
 	//m_terrain.drawWireframe();
 	terrain_shader.end();
 	//ofRotateX(15);
@@ -466,12 +467,11 @@ void ofApp::keyPressed(int key){
 			fprintf(stderr, "Target Y: %2.4f\n", target.y);
 			break;
 		case 'r':
-			/*
+    
 			terrain.reset();
 			genTerrain();
-			m_terrain.load("Terrain.ply");
+			m_terrain.load("NewTerrain.ply");
 			fprintf(stderr, "Terrain reset\n");
-			*/
 			break;
 		case 's':
 			drawShip = !drawShip;

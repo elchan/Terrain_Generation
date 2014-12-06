@@ -38,7 +38,7 @@ void main(){
 	vec4 light_camera_space = modelViewMatrix * vec4(LightPosition, 1) ;
 
 	vec3 light_direction = normalize(light_camera_space.xyz - position_camera_space.xyz);
-	float light_intensity = dot(light_direction, -normal_camera_space);
+	float light_intensity = dot(light_direction, normal_camera_space);
 	
 	GS_in_vertexColor = vec4(0,1,0,1);
     if (position.z < 0) {
