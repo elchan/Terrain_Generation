@@ -13,7 +13,10 @@ uniform vec3 camLoc;
 //layout(location = 10) in vec4 color;
 
 in vec2 vs_texcoord[];
+in float vs_lightIntensity[];
+
 out vec2 gs_texcoord;
+out float gs_lightIntensity;
 
 layout(triangles) in;
 layout (triangle_strip, max_vertices=128) out;
@@ -24,7 +27,7 @@ out vec4 FS_in_vertexColor;
 
  //out vec4 vertex_color;
 
- vec4 setColor(vec4 position)
+ /*vec4 setColor(vec4 position)
  {
 	vec4 FS_in_vertexColor;
 
@@ -51,7 +54,7 @@ out vec4 FS_in_vertexColor;
     }
 
 	return FS_in_vertexColor;
- }
+ }*/
 
  vec4 divide (vec4 v1, vec4 v2)
  {
@@ -208,6 +211,7 @@ void noTess()
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gs_texcoord = vs_texcoord[i] ; 
+		gs_lightIntensity = vs_lightIntensity[i] ; 
 		FS_in_vertexColor = GS_in_vertexColor[i];
 		EmitVertex();
 	}

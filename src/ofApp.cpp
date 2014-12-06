@@ -52,13 +52,9 @@ void ofApp::setup(){
 
 	tessLevel = 0;
 	//texture
-	landImg.loadImage("texture2.jpg");
-	//fbo.allocate(1024 , 1024);
-	//fbo.begin();
-	//ofClear(255,255,255, 0);
-	//fbo.end();
+	landImg.loadImage("texture.jpg");
 	myTexture =landImg.getTextureReference();  
-	
+
 	light1_current_position = ofVec3f( 10.f ,0.f , 0.f );
 
 	current.x = 0;
@@ -251,7 +247,7 @@ void ofApp::draw(){
 	//glPolygonMode(GL_FRONT, GL_FILL);
 	//myTexture.unbind();  
 
-	ofPushMatrix();
+	//ofPushMatrix();
 	//ofTranslate(ofGetWidth() /2 , ofGetHeight() /2 , 0 ) ;
 	
 	
@@ -274,10 +270,11 @@ void ofApp::draw(){
 	//landImg.bind();
 	
 
-   
+   myTexture.bind();
 	terrain_shader.begin();
-	myTexture.bind();
-	terrain_shader.setUniformTexture("tex0", myTexture, 1);
+	
+	terrain_shader.setUniformTexture("tex0", landImg, 1);
+
     terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
     terrain_shader.setUniform1f("minHeight", terrain.minHeight);
     terrain_shader.setUniform1f("scale", scale);
@@ -317,7 +314,7 @@ void ofApp::draw(){
 
 	terrain_shader.end();
 	myTexture.unbind();
-	ofPopMatrix();
+	//ofPopMatrix();
 	//ofRotateX(15);
 
 	//ofSetColor(255);

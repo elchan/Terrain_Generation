@@ -139,7 +139,7 @@ struct Terrain {
         }
 
         std::cout << "Diamond Square iterations: " << iterations << " resulted in " << mesh.getNumVertices() << " vertices, " << mesh.getNumIndices() / 4 << " quads" << std::endl;
-     // generateVertexNormal(mesh);
+      generateVertexNormal(mesh);
       updateTexCoordinates();
         std::cout << "MinHeight: " << minHeight << " MaxHeight: " << maxHeight << std::endl;
         
@@ -175,7 +175,7 @@ struct Terrain {
     mesh.clearTexCoords();
     auto bottomLeft = ofVec2f(-unit/2.f, -unit/2.f);
     for (auto & vertex : mesh.getVertices()) {
-      mesh.addTexCoord(ofVec2f((vertex.x-bottomLeft.x)/unit, (vertex.y-bottomLeft.y)/unit));
+		mesh.addTexCoord(ofVec2f(1024.f * (vertex.x-bottomLeft.x)/unit, 1024.f * (vertex.y-bottomLeft.y)/unit));
     }
     
   }
