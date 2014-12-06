@@ -25,6 +25,9 @@ void rotateToNormal(ofVec3f normal) {
 
 void ofApp::setup(){
 	
+    secondWindow.setup("second window", 50, 50, 1024, 768, false);
+	angle = 0;
+	smooth = 0;
 	mode = 0;
 	info = false;
 	shipShade = false;
@@ -248,7 +251,8 @@ void ofApp::draw(){
     //light3.enable();
     //light1.setDirectional();
    // light1.lookAt(ofVec3f(0, 0, 0));
-	light1.setPosition(0, 275, 50);
+	if ( angle >= 2*3.14159) angle = 0;
+	light1.setPosition(0, 180*abs(cos(angle+=0.001)), terrain.maxHeight*3*abs(sin(angle+=0.001)));
 
    // light1.setGlobalPosition(light1_current_position);
 	light1.setDiffuseColor(ofFloatColor(1.f , 1.f , 1.f));
@@ -273,6 +277,7 @@ void ofApp::draw(){
 	terrain_shader.setUniform1f("far",camera1.getFarClip());
 	terrain_shader.setUniform1f("near",camera1.getNearClip());
 	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
+	terrain_shader.setUniform1i("poly", smooth);
 	float position[3];
 	ofVec3f posvec = camera1.getPosition();
 	position[0] = posvec.x;
@@ -290,7 +295,9 @@ void ofApp::draw(){
 	//ofTranslate(0,0,0);
 	//ofRotateY(180);
 	//terrain.draw();
+	myImage.bind();
   terrain.draw(wireframemode);
+  myImage.unbind();
 //	if (wireframemode)
 //	{
 //		m_terrain.drawWireframe();
@@ -476,7 +483,16 @@ void ofApp::keyPressed(int key){
 			fprintf(stderr, "Terrain reset\n");
 			break;
 		case 's':
-			drawShip = !drawShip;
+			if (smooth == 0)
+			{
+				smooth = 1;
+				fprintf(stderr, "Smooth ON\n");
+			}
+			else
+			{
+				smooth = 0;
+				fprintf(stderr, "Smooth OFF\n");
+			}
 			break;
 		case 'i':
 			info = !info;

@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "Terrain.hpp"
+#include "ofxSecondWindow.h"
 
 class ofApp : public ofBaseApp{
 	public:
@@ -63,5 +64,8 @@ public:
 		GLfloat imgPlane;
 		bool wireframemode;
 		int mode;
+		int smooth;
+		float angle;
+	    ofxSecondWindow secondWindow;
 
 };
