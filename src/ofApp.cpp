@@ -56,7 +56,7 @@ void ofApp::setup(){
 	tessLevel = 0;
 	//texture
 	landImg.loadImage("texture.jpg");
-	myTexture =landImg.getTextureReference();  
+	//myTexture =landImg.getTextureReference();
 
 	light1_current_position = ofVec3f( 10.f ,0.f , 0.f );
 
