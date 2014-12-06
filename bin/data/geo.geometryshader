@@ -8,6 +8,7 @@ uniform float far;
 uniform float near;
 uniform float imgPlane;
 uniform vec3 camLoc;
+uniform int poly;
 
 //layout(location = 0) in vec4 position;
 //layout(location = 10) in vec4 color;
@@ -58,10 +59,170 @@ out vec4 FS_in_vertexColor;
 
  vec4 divide (vec4 v1, vec4 v2)
  {
-		return (v1+v2)/2;
+	return (v1+v2)/2;
+	float x = (v1.x+v2.x)/2;
+	float y = (v1.y+v2.y)/2;
+
+	float z;
+
+	if (poly != 1)
+	{
+		z = (v1.z+v2.z)/2;
+	}
+	else
+	{
+		z = ((v1.z*v1.z)+v2.z);
+	}
+	float w = 1;
+	return vec4(x,y,z,w);
 
  }
 
+void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+ {
+			vec4 np0 = divide(v2,v1);
+			vec4 np1 = divide(v0, v2);
+			vec4 np2 = divide(v1,v0);
+
+			
+
+			gl_Position = v2;
+			FS_in_vertexColor = GS_in_vertexColor[2];
+			EmitVertex();
+
+ 			gl_Position = v0;
+			FS_in_vertexColor = GS_in_vertexColor[0];
+			EmitVertex();
+
+			gl_Position = v1;
+			FS_in_vertexColor = GS_in_vertexColor[1];
+			EmitVertex();        
+        
+			gl_Position = np1;
+			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			EmitVertex();
+
+			gl_Position = np2;
+			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			EmitVertex();
+
+			gl_Position = np0;
+			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			EmitVertex();
+
+ }
+
+ void tessellate2(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+ {
+			vec4 np0 = divide(v2,v1);
+			vec4 np1 = divide(v0, v2);
+			vec4 np2 = divide(v1,v0);
+
+ 			gl_Position = v0;
+			FS_in_vertexColor = GS_in_vertexColor[0];
+			EmitVertex();
+
+			gl_Position = v1;
+			FS_in_vertexColor = GS_in_vertexColor[1];
+			EmitVertex();
+        
+			gl_Position = v2;
+			FS_in_vertexColor = GS_in_vertexColor[2];
+			EmitVertex();
+        
+			gl_Position = np1;
+			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			EmitVertex();
+
+			gl_Position = np2;
+			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			EmitVertex();
+
+			gl_Position = np0;
+			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			EmitVertex();
+
+			
+			tessellate1(v0,np2,np1,0,0);
+			tessellate1(np2,v1,np0,0,0);			
+			tessellate1(np1,np0,v2,0,0);
+			tessellate1(np1,np2,np0,0,0);
+}
+
+
+void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+ {
+			vec4 np0 = divide(v2,v1);
+			vec4 np1 = divide(v0, v2);
+			vec4 np2 = divide(v1,v0);
+
+ 			gl_Position = v0;
+			FS_in_vertexColor = GS_in_vertexColor[0];
+			EmitVertex();
+
+			gl_Position = v1;
+			FS_in_vertexColor = GS_in_vertexColor[1];
+			EmitVertex();
+        
+			gl_Position = v2;
+			FS_in_vertexColor = GS_in_vertexColor[2];
+			EmitVertex();
+        
+			gl_Position = np1;
+			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			EmitVertex();
+
+			gl_Position = np2;
+			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			EmitVertex();
+
+			gl_Position = np0;
+			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			EmitVertex();
+
+			tessellate2(v0, np2, np1,0,0);
+			tessellate2(np2, v1, np0,0,0);
+			tessellate2(np2, np0, np1,0,0);
+			tessellate2(np1, np0, v2,0,0);			
+}
+
+
+ void tessellate4(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+ {
+			vec4 np0 = divide(v2,v1);
+			vec4 np1 = divide(v0, v2);
+			vec4 np2 = divide(v1,v0);
+
+ 			gl_Position = v0;
+			FS_in_vertexColor = GS_in_vertexColor[0];
+			EmitVertex();
+
+			gl_Position = v1;
+			FS_in_vertexColor = GS_in_vertexColor[1];
+			EmitVertex();
+        
+			gl_Position = v2;
+			FS_in_vertexColor = GS_in_vertexColor[2];
+			EmitVertex();
+        
+			gl_Position = np1;
+			FS_in_vertexColor = (GS_in_vertexColor[0] + GS_in_vertexColor[2]) / 2;
+			EmitVertex();
+
+			gl_Position = np2;
+			FS_in_vertexColor = (GS_in_vertexColor[1] + GS_in_vertexColor[0]) / 2;
+			EmitVertex();
+
+			gl_Position = np0;
+			FS_in_vertexColor = (GS_in_vertexColor[2] + GS_in_vertexColor[1]) / 2;
+			EmitVertex();
+
+			tessellate3(v0, np2, np1,0,0);
+			tessellate3(np2, v1, np0,0,0);
+			tessellate3(np2, np0, np1,0,0);
+			tessellate3(np1, np0, v2,0,0);
+}
+/*
  void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
  {
 			vec4 np0 = divide(v2,v1);
@@ -203,7 +364,7 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			tessellate3(np2, np0, np1,0,0);
 			tessellate3(np1, np0, v2,0,0);
 }
-
+*/
 
 void noTess()
 {
