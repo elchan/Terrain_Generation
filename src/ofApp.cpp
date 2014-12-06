@@ -66,6 +66,7 @@ void ofApp::setup(){
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
 
+  /**
     terrain.reset();
 	//terrain.diamondSquareIterationByIdx();
 	for (auto & vertex : terrain.mesh.getVertices()) {
@@ -79,6 +80,7 @@ void ofApp::setup(){
     //m_terrain = terrain.mesh;
 	//terrain.diamondSquareIterationByIdx();
     //diamondSquare(m_terrain, landImg);
+   */
 }
 
 void ofApp::genTerrain()

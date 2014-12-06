@@ -1,5 +1,6 @@
 #pragma once
 #include "ofMain.h"
+#include <cassert>
 struct Triangle {
     ofMesh * mesh;
     ofIndexType indices[3];
