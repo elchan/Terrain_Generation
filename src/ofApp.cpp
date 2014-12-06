@@ -44,7 +44,7 @@ void ofApp::setup(){
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
 	genTerrain();
 //	m_mesh.load("C:\\Users\\Ellison\\Documents\\Models\\bsg.ply");
-	m_terrain.load("NewTerrain.ply");
+//	m_terrain.load("NewTerrain.ply");
 	//m_terrain.load("Terrain.ply");
 	  
 //	shader.load("shader.vert", "shader.frag");
@@ -67,6 +67,9 @@ void ofApp::setup(){
 	camera1.setGlobalPosition((ofVec3f(current.x, current.y, current.z)));
 	camera1.lookAt(ofVec3f(0, 0, 0));
 	target = ofVec3f(0,0,0);
+  
+  camera2.setGlobalPosition(ofVec3f(0, 0, 500));
+  camera1.lookAt(ofVec3f(0, 0, 0));
 	//myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
 	
 
@@ -93,12 +96,12 @@ void ofApp::setup(){
 
 void ofApp::genTerrain()
 {
-	for (int i=0; i< 6; i++)
+	for (int i=0; i< 4; i++)
 	{
 		terrain.diamondSquareIterationByIdx();
 	}
 
-	terrain.save();
+//	terrain.save();
 }
 
 /*
@@ -237,8 +240,8 @@ void ofApp::draw(){
 	ofColor magenta = ofColor::fromHex(0xec008c);
 	ofColor yellow = ofColor::fromHex(0xffee00);
 
-	ofBackgroundGradient(cyan * 1.0, cyan * .4);
-	ofNoFill();
+//	ofBackgroundGradient(cyan * 1.0, cyan * .4);
+//	ofNoFill();
 
 	//camera1.setVFlip(true);
 //	camera1.setPosition((ofVec3f(0, -275, 140)));
@@ -249,63 +252,79 @@ void ofApp::draw(){
 	//ofTranslate(current.x, current.y, current.z);
 	//glPolygonMode(GL_FRONT, GL_FILL);
 	//myTexture.unbind();  
-
+  renderTerrain();
 	//ofPushMatrix();
 	//ofTranslate(ofGetWidth() /2 , ofGetHeight() /2 , 0 ) ;
 	
 	
-    light1.enable();
 
-    //light2.enable();
-    //light3.enable();
-    //light1.setDirectional();
-   // light1.lookAt(ofVec3f(0, 0, 0));
+//    light2.disable();
+//    light3.disable();
+	camera1.end();
+  
+  
+  secondWindow.begin();
+  ofClear(1,1,1);
+	camera2.begin();
+  bool originalWireFrame = wireframemode;
+  wireframemode = true;
+  renderTerrain();
+	camera2.end();
+  wireframemode = originalWireFrame;
+  secondWindow.end();
+}
+
+void ofApp::renderTerrain() {
+  light1.enable();
+  
 	if ( angle >= 2*3.14159) angle = 0;
 	light1.setPosition(0, 180*abs(cos(angle+=0.001)), terrain.maxHeight*3*abs(sin(angle+=0.001)));
-
-   // light1.setGlobalPosition(light1_current_position);
+  
+  // light1.setGlobalPosition(light1_current_position);
 	light1.setDiffuseColor(ofFloatColor(1.f , 1.f , 1.f));
 	light1.setAttenuation(0.f , 0.f, 0.f );
-
+  
 	//a sphere as the light source
 	ligthBulb.setPosition (light1.getPosition());
 	ligthBulb.setRadius(10.f);
 	ligthBulb.enableColors();
 	ligthBulb.draw();
-
+  
 	ofMatrix4x4 cameraViewMatrix;
 	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
+//  ofMatrix4x4 tessCamMVP = cameraViewMatrix * camera1.getProjectionMatrix();
 	
 	//landImg.bind();
 	
-
-   myTexture.bind();
+  
+  myTexture.bind();
 	terrain_shader.begin();
 	
 	terrain_shader.setUniformTexture("tex0", landImg, 1);
-
-    terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
-    terrain_shader.setUniform1f("minHeight", terrain.minHeight);
-    terrain_shader.setUniform1f("scale", scale);
-    terrain_shader.setUniform1i("tess", tess);
+  
+  terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
+  terrain_shader.setUniform1f("minHeight", terrain.minHeight);
+  terrain_shader.setUniform1f("scale", scale);
+  terrain_shader.setUniform1i("tess", tess);
 	terrain_shader.setUniform1i("tessLevel", tessLevel);
 	terrain_shader.setUniform1f("far",camera1.getFarClip());
 	terrain_shader.setUniform1f("near",camera1.getNearClip());
 	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
 	terrain_shader.setUniform1i("poly", smooth);
+//  terrain_shader.setUniformMatrix4f("tesselationCamMVP", camera1.getProjectionMatrix());
 	float position[3];
 	ofVec3f posvec = camera1.getPosition();
 	position[0] = posvec.x;
 	position[1] = posvec.y;
 	position[2] = posvec.z;
 	terrain_shader.setUniform3fv("camLoc",position,1);
-
-
-
+  
+  
+  
 	//Light
 	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);
-
-//	ofScale(scale,1.0f,scale);
+  
+  //	ofScale(scale,1.0f,scale);
 	//ofRotateX(90);
 	//ofTranslate(0,0,0);
 	//ofRotateY(180);
@@ -313,46 +332,46 @@ void ofApp::draw(){
 	myImage.bind();
   terrain.draw(wireframemode);
   myImage.unbind();
-
-//	if (wireframemode)
-//	{
-//		m_terrain.drawWireframe();
-//	}
-//	else
-//	{
-//		m_terrain.draw();
-//	}
+  
+  //	if (wireframemode)
+  //	{
+  //		m_terrain.drawWireframe();
+  //	}
+  //	else
+  //	{
+  //		m_terrain.draw();
+  //	}
 	//m_terrain.drawWireframe();
-
+  
 	terrain_shader.end();
 	myTexture.unbind();
 	//ofPopMatrix();
 	//ofRotateX(15);
-
+  
 	//ofSetColor(255);
 	//ofDrawGrid(500, 10, false, false, true, false);
 	
 	/*
-	// draw the path of the box	
-	ofSetLineWidth(2);
-	ofSetColor(cyan);
-	pathLines.draw();
-	*/
+   // draw the path of the box
+   ofSetLineWidth(2);
+   ofSetColor(cyan);
+   pathLines.draw();
+   */
 	// draw a line connecting the box to the grid
 	//ofSetColor(yellow);
 	//ofLine(current.x, current.y, current.z, current.x, 0, current.z);
 	
 	
-    //if( (current - previous ).length() > 0.0 )
+  //if( (current - previous ).length() > 0.0 )
 	{
-        //rotateToNormal(current - previous);
+    //rotateToNormal(current - previous);
 		//easyCam.setTarget(current + (550*scale,550*scale,-15));
 		//ofVec3f currentRelative2Drone = current-(current-m_mesh.getCentroid());
 		//easyCam.enableOrtho();
 		//easyCam.setFarClip(1000);
 		//easyCam.setNearClip(550);
-//		camera1.setPosition(ofVec3f(current.x,current.y, current.z));
-//		camera1.lookAt(ofVec3f(current.x,current.y, current.z));
+    //		camera1.setPosition(ofVec3f(current.x,current.y, current.z));
+    //		camera1.lookAt(ofVec3f(current.x,current.y, current.z));
 		//easyCam.setDistance(current.y);
 		//easyCam.setTarget(ofVec3f(current.x,current.y, current.z));
 		//ofNode targ = easyCam.getTarget();
@@ -361,38 +380,35 @@ void ofApp::draw(){
 		//ofRotateX(90);
 		//sphere.setPosition((ofVec3f(current.x, current.y+target.y, current.z+1)));
  		//sphere.draw();
-        if (drawShip)
-        {
-            
-
-            
-
-
-//                ofSetColor(255,0,0);		
-//                if (shipShade)
-//                {
-//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-//                    model_shader.begin();
-//                    ofScale (10,10,10);
-//                    m_mesh.draw();
-//                    model_shader.end();
-//                }
-//                else
-//                {
-//                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
-//                    ofScale (10,10,10);
-//                    m_mesh.drawWireframe();
-//                }
-            
-
-
-        }
+    if (drawShip)
+    {
+      
+      
+      
+      
+      
+      //                ofSetColor(255,0,0);
+      //                if (shipShade)
+      //                {
+      //                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+      //                    model_shader.begin();
+      //                    ofScale (10,10,10);
+      //                    m_mesh.draw();
+      //                    model_shader.end();
+      //                }
+      //                else
+      //                {
+      //                    ofTranslate((ofVec3f(current.x, current.y+target.y, current.z+(zoff))));
+      //                    ofScale (10,10,10);
+      //                    m_mesh.drawWireframe();
+      //                }
+      
+      
+      
     }
-
-    light1.disable();
-//    light2.disable();
-//    light3.disable();
-	camera1.end();
+  }
+  
+  light1.disable();
 }
 
 //--------------------------------------------------------------

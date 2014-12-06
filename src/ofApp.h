@@ -21,6 +21,8 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		void diamondSquare(ofMesh &mesh, ofImage &img);
 		void genTerrain();
+  
+  void renderTerrain();
 
 
 public:
@@ -33,6 +35,7 @@ public:
 		ofMesh m_mesh;
 		ofMesh m_terrain;
 		ofCamera camera1;
+		ofCamera camera2;
 //		ofShader shader;
 		ofShader model_shader;
 		ofShader terrain_shader;
