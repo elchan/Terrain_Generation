@@ -439,7 +439,7 @@ void ofApp::keyPressed(int key){
 					wireframemode = false;
 					wfmode = "Wireframe OFF";
 				}
-				fprintf(stderr, "%s\n", wfmode);
+				fprintf(stderr, "%s\n", wfmode.c_str());
 			}
 			break;
 		case 't':
