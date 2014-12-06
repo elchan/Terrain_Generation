@@ -418,25 +418,24 @@ void noTess()
 			int lvl =0;
 
 			/**/
-			if ((p0.y >=camLoc.y) && (p0.y < camLoc.y+200))
+
+      if ((p0.y >=camLoc.y) && (p0.y < camLoc.y+200))
 			{
 				tessellate3(p0,p1,p2,0,3);
 			}
-
-			if ((p0.y >=camLoc.y+200) && (p0.y < camLoc.y+400))
+      else if ((p0.y >=camLoc.y+200) && (p0.y < camLoc.y+400))
 			{
 				tessellate2(p0,p1,p2,0,3);
-			}
-
-			if ((p0.y >=camLoc.y+400) && (p0.y < camLoc.y+600))
+			} 
+      else if ((p0.y >=camLoc.y+400) && (p0.y < camLoc.y+600))
 			{
 				tessellate1(p0,p1,p2,0,3);
 			}
+      else { //	if ((p0.y >camLoc.y+600))
+        noTess();
+      }
 
-			if ((p0.y >camLoc.y+600))
-			{
-				noTess();
-			}
+
 		}
 
 	EndPrimitive();
