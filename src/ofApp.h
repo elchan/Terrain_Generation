@@ -42,7 +42,6 @@ public:
 		Terrain terrain;
 		float scale;
 		float defaultHeight;
-		ofImage myImage;
 		ofTexture myTexture;
 		bool topView;
 		bool drawShip;
@@ -70,5 +69,15 @@ public:
 		int smooth;
 		float angle;
 	    ofxSecondWindow secondWindow;
+		ofShader shader;
+		ofImage image;
+	    ofImage imageMask;
+	    ofFbo fbo;
+	    ofFbo maskFbo;
+		int fboWidth;
+		int fboHeight;
+
+
+
 
 };
