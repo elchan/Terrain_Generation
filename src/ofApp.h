@@ -86,13 +86,9 @@ public:
 		int fboWidth;
 		int fboHeight;
 		float camFOV;
-<<<<<<< HEAD
 		float cam1FOV;
-		float cam2FOV;
-=======
-  
-    ofRectangle rect;
->>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
+		float cam2FOV;  
+	    ofRectangle rect;
 
 #ifdef __APPLE__
   
