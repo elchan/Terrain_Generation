@@ -454,17 +454,6 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 	{
 		return false;
 	}
-
-	/*
-	if (((vloc.x) <= x) && ((vloc.y) <= y))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	*/
 }
 
  void main()

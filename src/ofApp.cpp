@@ -96,6 +96,8 @@ void ofApp::setup(){
     fbo.allocate(fboWidth, fboHeight);
     maskFbo.allocate(fboWidth, fboHeight);
 
+	mainCam = camera1;
+	insetCam = camera2;
 }
 
 void ofApp::genTerrain()
@@ -123,6 +125,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+	mainCam = camera1;
+	insetCam = camera2;
+
 	glEnable(GL_CULL_FACE);
 	glShadeModel ( GL_SMOOTH ) ;
 	glFrontFace(GL_CW);
@@ -135,9 +140,9 @@ void ofApp::draw(){
 		sprintf(str, "x=%2.0f y=%2.0f z=%2.0f frame rate: %2.0f\n\0",current.x, current.y, current.z, ofGetFrameRate());
 		fontObj.drawString (str,0, terrain.maxHeight);
 	}
-	camera1.begin();
+	mainCam.begin();
 	renderTerrain();
-	camera1.end();
+	mainCam.end();
   /*
     maskFbo.begin();
 
@@ -157,11 +162,11 @@ void ofApp::draw(){
   fbo.begin();
 #endif
 	ofClear(128,128,128);
-	camera2.begin();
+	insetCam.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
 	renderTerrain();
-	camera2.end();
+	insetCam.end();
 	wireframemode = originalWireFrame;
 #ifdef __APPLE__
   secondWindow.end();
@@ -426,14 +431,14 @@ void ofApp::keyPressed(int key){
 			tessLevel = 4;
 			fprintf(stderr, "tessLevel= %i\n",tessLevel);
 			break;
-		case 'z':
+		case 'x':
 			{
 				float incr = 1.;
 				incrFOV(camera1, incr);
 				fprintf(stderr, "Cam1:%f Cam2:%f\n",camera1.getFov(), camera2.getFov());
 			}
 			break;
-		case 'x':
+		case 'z':
 			{
 				float incr = -1.;
 				incrFOV(camera1, incr);

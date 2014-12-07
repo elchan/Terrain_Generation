@@ -88,6 +88,8 @@ public:
 		float camFOV;
 		float cam1FOV;
 		float cam2FOV;  
+		ofCamera mainCam;
+		ofCamera insetCam;
 	    ofRectangle rect;
 
 #ifdef __APPLE__
