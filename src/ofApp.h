@@ -2,7 +2,12 @@
 
 #include "ofMain.h"
 #include "Terrain.hpp"
+
+#ifdef __APPLE__
+
 #include "ofxSecondWindow.h"
+
+#endif
 
 class ofApp : public ofBaseApp{
 	public:
@@ -68,7 +73,6 @@ public:
 		int mode;
 		int smooth;
 		float angle;
-	    ofxSecondWindow secondWindow;
 		ofShader shader;
 		ofImage image;
 	    ofImage imageMask;
@@ -78,7 +82,10 @@ public:
 		int fboHeight;
 		float camFOV;
 
-
-
+#ifdef __APPLE__
+  
+ofxSecondWindow secondWindow;
+  
+#endif
 
 };

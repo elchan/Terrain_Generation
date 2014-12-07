@@ -34,8 +34,9 @@ void ofApp::setup(){
 	}
 #endif
 
-
-    //secondWindow.setup("second window", 50, 50, 1024, 768, false);
+#ifdef __APPLE__
+  secondWindow.setup("second window", 50, 50, 512, 384, false);
+#endif
 	fboWidth = 256;
 	fboHeight = 256;
 	angle = 0;
@@ -147,18 +148,26 @@ void ofApp::draw(){
     maskFbo.end();
 	*/
 
-	fbo.begin();
-	ofClear(255,255,255);
+#ifdef __APPLE__
+  secondWindow.begin();
+#else
+  fbo.begin();
+#endif
+	ofClear(128,128,128);
 	camera2.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
 	renderTerrain();
 	camera2.end();
 	wireframemode = originalWireFrame;
+#ifdef __APPLE__
+  secondWindow.end();
+#else
     //maskFbo.draw(0,0);
 	fbo.end();
 	//ofRotateZ(180);
 	fbo.draw(0,0,fboWidth,fboHeight);
+#endif
 }
 
 void ofApp::renderTerrain() {
