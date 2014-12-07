@@ -34,8 +34,10 @@ void ofApp::setup(){
 	}
 #endif
 
-
-    //secondWindow.setup("second window", 50, 50, 1024, 768, false);
+#ifdef __APPLE__
+  secondWindow.setup("second window", 50, 50, 512, 384, false);
+  camera1.setup();
+#endif
 	fboWidth = 256;
 	fboHeight = 256;
 	angle = 0;
@@ -149,18 +151,34 @@ void ofApp::draw(){
     maskFbo.end();
 	*/
 
+<<<<<<< HEAD
 	fbo.begin();
 	ofClear(0,0,0);
+=======
+#ifdef __APPLE__
+  secondWindow.begin();
+#else
+  fbo.begin();
+#endif
+	ofClear(128,128,128);
+>>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
 	camera2.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
 	renderTerrain();
 	camera2.end();
 	wireframemode = originalWireFrame;
+<<<<<<< HEAD
+=======
+#ifdef __APPLE__
+  secondWindow.end();
+#else
+>>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
     //maskFbo.draw(0,0);
 	fbo.end();
 	//ofRotateZ(180);
 	fbo.draw(0,0,fboWidth,fboHeight);
+#endif
 }
 
 void ofApp::renderTerrain() {
@@ -232,6 +250,7 @@ void rotCam(ofCamera &cam, float deg)
 	cam.rotate(deg, 0, 0, 1);
 }
 
+<<<<<<< HEAD
 void incrFOV(ofCamera &cam, float incr)
 {
 	float fov = cam.getFov();
@@ -240,8 +259,27 @@ void incrFOV(ofCamera &cam, float incr)
 }
 
 
+=======
+>>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+#ifdef __APPLE__
+  if (key == '0') {
+    tessLevel = 0;
+  }
+  else if (key == '1') {
+    tessLevel = 1;
+  }
+  else if (key == '2') {
+    tessLevel = 2;
+  }
+  else if (key == '3') {
+    tessLevel = 3;
+  }
+  else if (key == '4') {
+    tessLevel = 4;
+  }
+#else
 	float posInc = 10.0f;
 	switch (key)
 	{
@@ -419,6 +457,7 @@ void ofApp::keyPressed(int key){
 
 
 	}
+#endif
 }
 
 //--------------------------------------------------------------

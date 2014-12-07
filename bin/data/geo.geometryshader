@@ -432,7 +432,11 @@ void noTess()
 
 bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 {
+<<<<<<< HEAD
 	//if (vloc.y > cloc.y) return false;
+=======
+	//if (vloc.y >= cloc.y) return false;
+>>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
 
 	vec2 sqr = cloc.xy + vloc.xy;
 	float fovrad = ((fov)/360)*(2*PI);
