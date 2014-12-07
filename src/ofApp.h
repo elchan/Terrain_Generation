@@ -86,7 +86,7 @@ public:
 		int fboHeight;
 		float camFOV;
   
-//    ofRect rect;
+    ofRectangle rect;
 
 #ifdef __APPLE__
   

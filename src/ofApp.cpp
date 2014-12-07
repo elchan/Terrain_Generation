@@ -240,6 +240,23 @@ void rotCam(ofCamera &cam, float deg)
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+#ifdef __APPLE__
+  if (key == '0') {
+    tessLevel = 0;
+  }
+  else if (key == '1') {
+    tessLevel = 1;
+  }
+  else if (key == '2') {
+    tessLevel = 2;
+  }
+  else if (key == '3') {
+    tessLevel = 3;
+  }
+  else if (key == '4') {
+    tessLevel = 4;
+  }
+#else
 	float posInc = 10.0f;
 	switch (key)
 	{
@@ -402,6 +419,7 @@ void ofApp::keyPressed(int key){
 
 
 	}
+#endif
 }
 
 //--------------------------------------------------------------
