@@ -76,6 +76,7 @@ public:
 	    ofFbo maskFbo;
 		int fboWidth;
 		int fboHeight;
+		float camFOV;
 
 
 

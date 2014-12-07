@@ -52,6 +52,7 @@ void ofApp::setup(){
 	topView = true;
 	ofSetVerticalSync(true);
 	wireframemode = false;
+	camFOV = 0;
 	// draw the vertices in pathLines as a line strip
 	pathLines.setMode(OF_PRIMITIVE_LINE_STRIP);
 	genTerrain();
@@ -80,16 +81,9 @@ void ofApp::setup(){
 	camera1.lookAt(ofVec3f(0, 0, 0));
 	target = ofVec3f(0,0,0);
   
-  camera2.setGlobalPosition(ofVec3f(0, 0, 500));
-<<<<<<< HEAD
-  camera1.lookAt(ofVec3f(0, 0, 0));
-	image.loadImage("texture.jpg");
-=======
-  camera2.lookAt(ofVec3f(0, 0, 0));
-	//myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
-	
-
->>>>>>> origin/master
+	camera2.setGlobalPosition(ofVec3f(0, 0,800));
+	//camera2.rotate(45,0,0,1);
+	camera2.lookAt(ofVec3f(0, 0, -800));
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
@@ -102,7 +96,7 @@ void ofApp::setup(){
 
 void ofApp::genTerrain()
 {
-	for (int i=0; i< 4; i++)
+	for (int i=0; i< 6; i++)
 	{
 		terrain.diamondSquareIterationByIdx();
 	}
@@ -140,17 +134,30 @@ void ofApp::draw(){
 	camera1.begin();
 	renderTerrain();
 	camera1.end();
-  
+  /*
+    maskFbo.begin();
+
+    ofClear(255, 0, 0, 255);
+    
+    float imageMaskX = mouseX / (float)ofGetWidth();
+    imageMaskX = ofClamp(imageMaskX, 0, 1);
+    imageMaskX = -(imageMask.getWidth() - maskFbo.getWidth()) * imageMaskX;
+    imageMask.draw(imageMaskX, 0);
+    
+    maskFbo.end();
+	*/
+
 	fbo.begin();
-	ofClear(1,1,1);
+	ofClear(255,255,255);
 	camera2.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
 	renderTerrain();
 	camera2.end();
 	wireframemode = originalWireFrame;
-    maskFbo.draw(0, 0);
+    //maskFbo.draw(0,0);
 	fbo.end();
+	//ofRotateZ(180);
 	fbo.draw(0,0,fboWidth,fboHeight);
 }
 
@@ -158,7 +165,9 @@ void ofApp::renderTerrain() {
   light1.enable();
   
 	if ( angle >= 2*3.14159) angle = 0;
-	light1.setPosition(0, 180*abs(cos(angle+=0.001)), terrain.maxHeight*3*abs(sin(angle+=0.001)));
+//	light1.setPosition(0, 180*abs(cos(angle+=0.001)), terrain.maxHeight*3*abs(sin(angle+=0.001)));
+	angle = 0;
+	light1.setPosition(0, 0, terrain.maxHeight*8);
   
 	light1.setDiffuseColor(ofFloatColor(1.f , 1.f , 1.f));
 	light1.setAttenuation(0.f , 0.f, 0.f );
@@ -186,14 +195,16 @@ void ofApp::renderTerrain() {
 	terrain_shader.setUniform1f("near",camera1.getNearClip());
 	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
 	terrain_shader.setUniform1i("poly", smooth);
+	terrain_shader.setUniform1i("maxX", terrain.maxX);	
 	float position[3];
 	ofVec3f posvec = camera1.getPosition();
 	position[0] = posvec.x;
 	position[1] = posvec.y;
 	position[2] = posvec.z;
 	terrain_shader.setUniform3fv("camLoc",position,1);
-  
-  
+	terrain_shader.setUniform1f("camFOV", camera1.getFov()); 
+	//terrain_shader.setUniform1f("camFOV", 180); 
+	//fprintf(stderr,"FOV: %f\n", camera1.getFov());
   
 	//Light
 	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);  
@@ -203,6 +214,20 @@ void ofApp::renderTerrain() {
 	light1.disable();
 }
 
+void setCamPos(ofCamera &cam, ofVec4f posInc)
+{
+	auto pos = cam.getPosition();
+	pos.x += posInc.x;
+	pos.y += posInc.y;
+	pos.z += posInc.z;
+	cam.setPosition(pos);
+}
+
+void rotCam(ofCamera &cam, float deg)
+{
+	cam.rotate(deg, 0, 0, 1);
+}
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	float posInc = 10.0f;
@@ -210,55 +235,51 @@ void ofApp::keyPressed(int key){
 	{
 		case OF_KEY_RIGHT:
 			{
-				auto pos = camera1.getPosition();
-				pos.x+=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(posInc,0,0,0));
+				setCamPos(camera2, ofVec4f(posInc,0,0,0));
 				break;
 			}
 		case OF_KEY_LEFT:
 			{
-				auto pos = camera1.getPosition();
-				pos.x-=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(-posInc,0,0,0));
+				setCamPos(camera2, ofVec4f(-posInc,0,0,0));
 				break;
 			}
 		case OF_KEY_UP:
 			{
-				auto pos = camera1.getPosition();
-				pos.y+=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(0,+posInc,0,0));
+				setCamPos(camera2, ofVec4f(0,+posInc,0,0));
 				break;
 			}
 		case OF_KEY_DOWN:
 			{
-				auto pos = camera1.getPosition();
-				pos.y-=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(0,-posInc,0,0));
+				setCamPos(camera2, ofVec4f(0,-posInc,0,0));
 				break;
 			}
 		case OF_KEY_PAGE_UP:
 			{
-				auto pos = camera1.getPosition();
-				pos.z+=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(0,0,posInc,0));
+				setCamPos(camera2, ofVec4f(0,0,posInc,0));
 				break;
 			}
 		case OF_KEY_PAGE_DOWN:
 			{
-				auto pos = camera1.getPosition();
-				pos.z-=posInc;
-				camera1.setPosition(pos);
+				setCamPos(camera1, ofVec4f(0,0,-posInc,0));
+				setCamPos(camera2, ofVec4f(0,0,-posInc,0));
 				break;
 			}
 		case OF_KEY_HOME :
 			{
-				camera1.rotate(10, 0, 0, 1);
+				rotCam(camera1, 10);
+				rotCam(camera2, 10);
 				break;
 			}
 
 		case OF_KEY_END :
 			{
-				camera1.rotate(-10, 0, 0, 1);
+				rotCam(camera1, -10);
+				rotCam(camera2, -10);
 				break;
 			}
 
