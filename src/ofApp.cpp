@@ -151,29 +151,21 @@ void ofApp::draw(){
     maskFbo.end();
 	*/
 
-<<<<<<< HEAD
-	fbo.begin();
-	ofClear(0,0,0);
-=======
 #ifdef __APPLE__
   secondWindow.begin();
 #else
   fbo.begin();
 #endif
 	ofClear(128,128,128);
->>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
 	camera2.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
 	renderTerrain();
 	camera2.end();
 	wireframemode = originalWireFrame;
-<<<<<<< HEAD
-=======
 #ifdef __APPLE__
   secondWindow.end();
 #else
->>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
     //maskFbo.draw(0,0);
 	fbo.end();
 	//ofRotateZ(180);
@@ -250,7 +242,6 @@ void rotCam(ofCamera &cam, float deg)
 	cam.rotate(deg, 0, 0, 1);
 }
 
-<<<<<<< HEAD
 void incrFOV(ofCamera &cam, float incr)
 {
 	float fov = cam.getFov();
@@ -258,10 +249,6 @@ void incrFOV(ofCamera &cam, float incr)
 	cam.setFov(fov);
 }
 
-
-=======
->>>>>>> 645f7668009d94be2c9d0f82f161366be109bb00
-//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 #ifdef __APPLE__
   if (key == '0') {
