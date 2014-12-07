@@ -81,8 +81,15 @@ void ofApp::setup(){
 	target = ofVec3f(0,0,0);
   
   camera2.setGlobalPosition(ofVec3f(0, 0, 500));
+<<<<<<< HEAD
   camera1.lookAt(ofVec3f(0, 0, 0));
 	image.loadImage("texture.jpg");
+=======
+  camera2.lookAt(ofVec3f(0, 0, 0));
+	//myImage.loadImage("C:\\Users\\Ellison\\Pictures\\saj.jpg");  
+	
+
+>>>>>>> origin/master
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
