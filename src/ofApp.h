@@ -4,7 +4,7 @@
 #include "Terrain.hpp"
 
 #ifdef __APPLE__
-
+#include "ofxGameCamera.h"
 #include "ofxSecondWindow.h"
 
 #endif
@@ -39,7 +39,11 @@ public:
 		ofMesh pathLines;
 		ofMesh m_mesh;
 		ofMesh m_terrain;
+#ifdef __APPLE__
+    ofxGameCamera camera1;
+#else
 		ofCamera camera1;
+#endif
 		ofCamera camera2;
 //		ofShader shader;
 		ofShader model_shader;
@@ -81,6 +85,8 @@ public:
 		int fboWidth;
 		int fboHeight;
 		float camFOV;
+  
+//    ofRect rect;
 
 #ifdef __APPLE__
   

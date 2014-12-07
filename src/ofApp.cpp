@@ -36,6 +36,7 @@ void ofApp::setup(){
 
 #ifdef __APPLE__
   secondWindow.setup("second window", 50, 50, 512, 384, false);
+  camera1.setup();
 #endif
 	fboWidth = 256;
 	fboHeight = 256;
