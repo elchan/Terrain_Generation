@@ -18,6 +18,8 @@ layout(location = 10) in vec4 color;
 
 out vec2 vs_texcoord;
 out float vs_lightIntensity;
+out vec4 position_pretrans;
+out float vs_height;
 
 void main(){
 
@@ -41,6 +43,9 @@ void main(){
 	
 	vs_texcoord = texcoord;
 	vs_lightIntensity = light_intensity;
+	vs_height = position.z;
+
 
     gl_Position = modelViewProjectionMatrix * position;
+	position_pretrans = position;
 }

@@ -1,6 +1,7 @@
-#version 400
+#version 430
 uniform float minHeight;
 uniform float maxHeight;
+uniform float maxX;
 uniform float scale;
 uniform int tess;
 uniform int tessLevel;
@@ -9,10 +10,12 @@ uniform float near;
 uniform float imgPlane;
 uniform vec3 camLoc;
 uniform int poly;
+uniform float camFOV;
 
 
 //uniform mat4 tesselationCamMVP;
 
+#define PI 3.141592653
 
 
 //layout(location = 0) in vec4 position;
@@ -21,9 +24,13 @@ uniform int poly;
 
 in vec2 vs_texcoord[];
 in float vs_lightIntensity[];
+in vec4 pos_pretrans[];
+in float vs_height[];
 
 out vec2 gs_texcoord;
 out float gs_lightIntensity;
+out float height;
+
 
 layout(triangles) in;
 layout (triangle_strip, max_vertices=128) out;
@@ -61,31 +68,37 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			gl_Position = v2;
 			gs_lightIntensity = vs_lightIntensity[2];
 			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
 			EmitVertex();
 
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
 			gs_texcoord = vs_texcoord[0] ;
+			height = vs_height[0];
 			EmitVertex();
 
 			gl_Position = v1;
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
+			height = vs_height[1];
 			EmitVertex();        
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
 			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
+			height = (vs_height[0]+ vs_height[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
 			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
 			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
+			height = (vs_height[1]+ vs_height[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
 			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
 			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
+			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
  }
@@ -99,31 +112,37 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
 			gs_texcoord = vs_texcoord[0] ;
+			height = vs_height[0];
 			EmitVertex();
 
 			gl_Position = v1;
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
+			height = vs_height[1];
 			EmitVertex();
         
 			gl_Position = v2;
 			gs_lightIntensity = vs_lightIntensity[2];
 			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
 			EmitVertex();
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
 			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
+			height = (vs_height[0]+ vs_height[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
 			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
 			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
+			height = (vs_height[1]+ vs_height[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
 			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
 			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
+			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
 			
@@ -143,31 +162,37 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
 			gs_texcoord = vs_texcoord[0] ;
+			height = vs_height[0];
 			EmitVertex();
 
 			gl_Position = v1;
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
+			height = vs_height[1];
 			EmitVertex();
         
 			gl_Position = v2;
 			gs_lightIntensity = vs_lightIntensity[2];
 			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
 			EmitVertex();
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
 			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
+			height = (vs_height[0]+ vs_height[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
 			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
 			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
+			height = (vs_height[1]+ vs_height[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
 			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
 			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
+			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
 			tessellate2(v0, np2, np1,0,0);
@@ -186,31 +211,37 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
 			gs_texcoord = vs_texcoord[0] ;
+			height = vs_height[0];
 			EmitVertex();
 
 			gl_Position = v1;
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
+			height = vs_height[1];
 			EmitVertex();
         
 			gl_Position = v2;
 			gs_lightIntensity = vs_lightIntensity[2];
 			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
 			EmitVertex();
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
 			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
+			height = (vs_height[0]+ vs_height[2]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np2;
 			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
 			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
+			height = (vs_height[1]+ vs_height[0]) / 2 ;
 			EmitVertex();
 
 			gl_Position = np0;
 			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
 			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
+			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
 			tessellate3(v0, np2, np1,0,0);
@@ -394,10 +425,49 @@ void noTess()
 		gl_Position = gl_in[i].gl_Position;
 		gs_texcoord = vs_texcoord[i] ; 
 		gs_lightIntensity = vs_lightIntensity[i] ; 
+		height = vs_height[i] ;
 		EmitVertex();
 	}
 }
 
+bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
+{
+	//if (vloc.y > cloc.y) return false;
+
+	vec2 sqr = cloc.xy + vloc.xy;
+	float fovrad = ((fov)/360)*(2*PI);
+	float radius = sqrt( (sqr.x*sqr.x)+ (sqr.y*sqr.y));
+	float x = r1*cos(fovrad);
+	float y = r1*sin(fovrad);
+
+	float rad = (tan(sqr.x/sqr.y)); // In radians
+	bool inFOV = false;
+
+	if ((abs(rad) <= fovrad))
+	{
+		inFOV = true;
+	}
+
+	if (((radius >=r1) && (radius < r2)) && inFOV)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	/*
+	if (((vloc.x) <= x) && ((vloc.y) <= y))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	*/
+}
 
  void main()
 {
@@ -414,29 +484,38 @@ void noTess()
 		}
 		else
 		{
-			float depth = far - near;
-			int lvl =0;
+		/*
+		float r1 = 0;
+		float r2 = .11;
+		float r3 = .33;
+		float r4 = 1.;
+		*/
 
-			/**/
+		float r1 = 0;
+		float r2 = 200;
+		float r3 = 400;
+		float r4 = 600;
 
-      if ((p0.y >=camLoc.y) && (p0.y < camLoc.y+200))
-			{
-				tessellate3(p0,p1,p2,0,3);
-			}
-      else if ((p0.y >=camLoc.y+200) && (p0.y < camLoc.y+400))
-			{
-				tessellate2(p0,p1,p2,0,3);
-			} 
-      else if ((p0.y >=camLoc.y+400) && (p0.y < camLoc.y+600))
-			{
-				tessellate1(p0,p1,p2,0,3);
-			}
-      else { //	if ((p0.y >camLoc.y+600))
-        noTess();
-      }
+	  if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r1, r2))
+	  {
+		tessellate3(p0,p1,p2,0,3);
+	  }
+	  else if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r2, r3))
 
-
-		}
+	  {
+		tessellate2(p0,p1,p2,0,3);
+	  }
+	  else if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r3, r4))
+	  {
+		tessellate1(p0,p1,p2,0,3);
+	  }
+	  else
+	  {
+		//tessellate1(p0,p1,p2,0,3);
+		noTess();
+		//tessellate1(p0,p1,p2,0,3);
+	  }
+	}
 
 	EndPrimitive();
 

@@ -27,6 +27,7 @@ class ofApp : public ofBaseApp{
 
 public:
 		ofImage landImg;  
+		ofImage waterImg;
 		ofVec3f previous, current, target;
 		ofEasyCam easyCam;		
 		ofCamera fullCamera;
@@ -76,6 +77,9 @@ public:
 	    ofFbo maskFbo;
 		int fboWidth;
 		int fboHeight;
+		float camFOV;
+		float cam1FOV;
+		float cam2FOV;
 
 
 
