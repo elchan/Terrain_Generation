@@ -24,6 +24,13 @@ void rotateToNormal(ofVec3f normal) {
 
 
 void ofApp::setup(){
+
+	float x = 0.;
+float y = 1.;
+
+		fprintf(stderr, "Tan %f %f %f\n", 0,0,tan(x/y));
+		exit();
+
 #ifdef TARGET_OPENGLES
 	shader.load("shadersES2/shader");
 #else
@@ -85,9 +92,9 @@ void ofApp::setup(){
 	camera1.lookAt(ofVec3f(0, 0, 0));
 	target = ofVec3f(0,0,0);
   
-	camera2.setGlobalPosition(ofVec3f(0, 0,800));
-	//camera2.rotate(45,0,0,1);
-	camera2.lookAt(ofVec3f(0, 0, -800));
+	camera2.setGlobalPosition((ofVec3f(current.x, current.y, 800)));
+	//camera2.rotate(180,0,0,1);
+	//camera2.lookAt(ofVec3f(0, 0, -800));
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
@@ -125,8 +132,16 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	mainCam = camera1;
-	insetCam = camera2;
+	if (topView)
+	{
+		mainCam = camera1;
+		insetCam = camera2;
+	}
+	else
+	{
+		mainCam = camera2;
+		insetCam = camera1;
+	}
 
 	glEnable(GL_CULL_FACE);
 	glShadeModel ( GL_SMOOTH ) ;
@@ -141,7 +156,7 @@ void ofApp::draw(){
 		fontObj.drawString (str,0, terrain.maxHeight);
 	}
 	mainCam.begin();
-	renderTerrain();
+	renderTerrain(mainCam);
 	mainCam.end();
   /*
     maskFbo.begin();
@@ -160,25 +175,31 @@ void ofApp::draw(){
   secondWindow.begin();
 #else
   fbo.begin();
+  glDisable(GL_CULL_FACE);
 #endif
 	ofClear(128,128,128);
 	insetCam.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
-	renderTerrain();
+	renderTerrain(insetCam);
 	insetCam.end();
 	wireframemode = originalWireFrame;
 #ifdef __APPLE__
   secondWindow.end();
 #else
     //maskFbo.draw(0,0);
+	glEnable(GL_CULL_FACE);
 	fbo.end();
 	//ofRotateZ(180);
 	fbo.draw(0,0,fboWidth,fboHeight);
 #endif
 }
 
-void ofApp::renderTerrain() {
+void ofApp::renderTerrain(ofCamera cam) {
+
+	ofMatrix4x4 cameraViewMatrix;
+	cameraViewMatrix.makeLookAtViewMatrix(cam.getPosition() , cam.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
+
   light1.enable();
   
 	if ( angle >= 2*3.14159) angle = 0;
@@ -195,8 +216,6 @@ void ofApp::renderTerrain() {
 	ligthBulb.enableColors();
 	ligthBulb.draw();
   
-	ofMatrix4x4 cameraViewMatrix;
-	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
   
 	myTexture.bind();
 	terrain_shader.begin();
@@ -210,18 +229,19 @@ void ofApp::renderTerrain() {
 	terrain_shader.setUniform1f("scale", scale);
 	terrain_shader.setUniform1i("tess", tess);
 	terrain_shader.setUniform1i("tessLevel", tessLevel);
-	terrain_shader.setUniform1f("far",camera1.getFarClip());
-	terrain_shader.setUniform1f("near",camera1.getNearClip());
-	terrain_shader.setUniform1f("imgPlane",camera1.getImagePlaneDistance());
+	terrain_shader.setUniform1f("far",cam.getFarClip());
+	terrain_shader.setUniform1f("near",cam.getNearClip());
+	terrain_shader.setUniform1f("imgPlane",cam.getImagePlaneDistance());
 	terrain_shader.setUniform1i("poly", smooth);
 	terrain_shader.setUniform1i("maxX", terrain.maxX);	
 	float position[3];
-	ofVec3f posvec = camera1.getPosition();
+	ofVec3f posvec = cam.getPosition();
 	position[0] = posvec.x;
 	position[1] = posvec.y;
 	position[2] = posvec.z;
 	terrain_shader.setUniform3fv("camLoc",position,1);
-	terrain_shader.setUniform1f("camFOV", camera1.getFov()); 
+	terrain_shader.setUniform1f("camFOV", cam.getFov()); 
+	terrain_shader.setUniformMatrix4f("modelViewMatrixMainCam",cameraViewMatrix);
 	//terrain_shader.setUniform1f("camFOV", 180); 
 	//fprintf(stderr,"FOV: %f\n", camera1.getFov());
   
@@ -345,17 +365,18 @@ void ofApp::keyPressed(int key){
 		case 't':
 			if (topView)
 			{
-				target.y=terrain.minHeight;
-				current.y= scale*550;
+				topView = false;
+				//mainCam = camera2;
+				//insetCam = camera1;
 				fprintf(stderr,"Top View.\n");
 			}
 			else
 			{
-				target.y=0;
-				current.y= terrain.maxHeight+defaultHeight;
-				fprintf(stderr,"Ortho View.\n");
+				topView = true;
+				//mainCam = camera1;
+				//insetCam = camera2;
+				fprintf(stderr,"Perspective View.\n");
 			}
-			topView = !topView;
 			break;
 		case 'n':
 			target.y+=posInc;
@@ -435,6 +456,7 @@ void ofApp::keyPressed(int key){
 			{
 				float incr = 1.;
 				incrFOV(camera1, incr);
+				incrFOV(camera2, incr);
 				fprintf(stderr, "Cam1:%f Cam2:%f\n",camera1.getFov(), camera2.getFov());
 			}
 			break;
@@ -442,6 +464,7 @@ void ofApp::keyPressed(int key){
 			{
 				float incr = -1.;
 				incrFOV(camera1, incr);
+				incrFOV(camera2, incr);
 				fprintf(stderr, "Cam1:%f Cam2:%f\n",camera1.getFov(), camera2.getFov());
 			}
 			break;

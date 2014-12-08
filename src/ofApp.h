@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp{
 		void diamondSquare(ofMesh &mesh, ofImage &img);
 		void genTerrain();
   
-  void renderTerrain();
+  void renderTerrain(ofCamera cam);
 
 
 public:
