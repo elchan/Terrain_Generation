@@ -189,7 +189,6 @@ void ofApp::draw(){
     //maskFbo.draw(0,0);
 	glEnable(GL_CULL_FACE);
 	fbo.end();
-	//ofRotateZ(180);
 	fbo.draw(0,0, fboWidth,fboHeight);
 #endif
 }
