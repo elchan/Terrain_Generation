@@ -15,6 +15,7 @@ uniform vec3 LightPosition ;
 layout(location = 0) in vec4 position;
 in vec3 normal;
 in vec2 texcoord;
+
 layout(location = 10) in vec4 color;
 
 
@@ -23,6 +24,7 @@ out float vs_lightIntensity;
 out vec4 position_pretrans;
 out float vs_height;
 out vec3 tcamLoc;
+out vec4 vs_vertexWorldSpace;
 
 void main(){
 
@@ -53,4 +55,6 @@ void main(){
 	position_pretrans = position;
 	//tcamLoc = (modelViewProjectionMatrix * vec4(camLoc.xyz,1.)).xyz;
 	tcamLoc = camLoc.xyz;
+	vs_vertexWorldSpace = position;
+
 }
