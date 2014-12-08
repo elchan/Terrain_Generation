@@ -378,14 +378,14 @@ void ofApp::keyPressed(int key){
 		case OF_KEY_HOME :
 			{
 				rotCam(camera1, 10);
-				rotCam(camera2, 10);
+				//rotCam(camera2, 10);
 				break;
 			}
 
 		case OF_KEY_END :
 			{
 				rotCam(camera1, -10);
-				rotCam(camera2, -10);
+				//rotCam(camera2, -10);
 				break;
 			}
 
