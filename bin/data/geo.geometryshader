@@ -11,7 +11,7 @@ uniform float imgPlane;
 uniform vec3 tcamLoc;
 uniform int poly;
 uniform float camFOV;
-
+uniform int camNam;
 
 //uniform mat4 tesselationCamMVP;
 
@@ -433,7 +433,14 @@ void noTess()
 
 bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 {
-	if (vloc.y > cloc.y) return false;
+	if (camNam == 2)
+	{
+		if (vloc.y > cloc.y) return false; //Vertex is behind camera
+	}
+	else
+	{
+		if (vloc.y < cloc.y) return false; //Vertex is behind camera
+	}
 
 	vec2 sqr = cloc.xy + vloc.xy;
 	float fovrad = ((fov)/360)*(2*PI);
@@ -441,13 +448,18 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 	float x = r1*cos(fovrad);
 	float y = r1*sin(fovrad);
 
-	float rad = (tan(sqr.x/sqr.y)); // In radians
-	bool inFOV = false;
+	x = vloc.x;
+	y = vloc.y;
 
-	if ((abs(rad) <= fovrad))
+	float rad = (tan(sqr.x/sqr.y)); // In radians
+	bool inFOV = true;
+
+	
+	if (((rad) > fovrad))
 	{
-		inFOV = true;
+		inFOV = false;
 	}
+	
 
 	if (((radius >=r1) && (radius < r2)) && inFOV)
 	{
@@ -462,6 +474,7 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
  void main()
 {
 		vec4 p0 = gl_in[0].gl_Position;
+		//vec4 p0 = position_pretrans[0];
 		vec4 p1 = gl_in[1].gl_Position;
 		vec4 p2 = gl_in[2].gl_Position;
 
@@ -484,21 +497,21 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 
 		
 		float r1 = 0;
-		float r2 = 200;
-		float r3 = 400;
-		float r4 = 600;
+		float r2 = 256;
+		float r3 = 384;
+		float r4 = 512;
 		
 
-	  if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r1, r2))
+	  if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r1, r2))
 	  {
 		tessellate3(p0,p1,p2,0,3);
 	  }
-	  else if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r2, r3))
+	  else if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r2, r3))
 
 	  {
 		tessellate2(p0,p1,p2,0,3);
 	  }
-	  else if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r3, r4))
+	  else if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r3, r4))
 	  {
 		tessellate1(p0,p1,p2,0,3);
 	  }

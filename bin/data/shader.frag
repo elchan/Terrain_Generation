@@ -13,6 +13,7 @@ uniform sampler2DRect tex1;
 
 void main()
 {
+
 	if(height< 0.0 ) 
 	{
 		outputColor = vec4 ((texture(tex1,gs_texcoord) * gs_lightIntensity).xyz , 1.);

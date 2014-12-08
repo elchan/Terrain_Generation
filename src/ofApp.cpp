@@ -93,8 +93,7 @@ float y = 1.;
 	target = ofVec3f(0,0,0);
   
 	camera2.setGlobalPosition((ofVec3f(current.x, current.y, 800)));
-	//camera2.rotate(180,0,0,1);
-	//camera2.lookAt(ofVec3f(0, 0, -800));
+	camera2.lookAt(ofVec3f(0, 0, 0));
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
@@ -156,7 +155,7 @@ void ofApp::draw(){
 		fontObj.drawString (str,0, terrain.maxHeight);
 	}
 	mainCam.begin();
-	renderTerrain(mainCam);
+	renderTerrain(mainCam, "mainCam");
 	mainCam.end();
   /*
     maskFbo.begin();
@@ -181,7 +180,7 @@ void ofApp::draw(){
 	insetCam.begin();
 	bool originalWireFrame = wireframemode;
 	wireframemode = true;
-	renderTerrain(insetCam);
+	renderTerrain(insetCam, "insetCam");
 	insetCam.end();
 	wireframemode = originalWireFrame;
 #ifdef __APPLE__
@@ -191,11 +190,11 @@ void ofApp::draw(){
 	glEnable(GL_CULL_FACE);
 	fbo.end();
 	//ofRotateZ(180);
-	fbo.draw(0,0,fboWidth,fboHeight);
+	fbo.draw(1024-fboWidth,768-fboHeight, fboWidth,fboHeight);
 #endif
 }
 
-void ofApp::renderTerrain(ofCamera cam) {
+void ofApp::renderTerrain(ofCamera cam, string camName) {
 
 	ofMatrix4x4 cameraViewMatrix;
 	cameraViewMatrix.makeLookAtViewMatrix(cam.getPosition() , cam.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
@@ -234,8 +233,16 @@ void ofApp::renderTerrain(ofCamera cam) {
 	terrain_shader.setUniform1f("imgPlane",cam.getImagePlaneDistance());
 	terrain_shader.setUniform1i("poly", smooth);
 	terrain_shader.setUniform1i("maxX", terrain.maxX);	
+	if (camName == "insetCam")
+	{
+		terrain_shader.setUniform1i("camNam", 2);	
+	}
+	else
+	{
+		terrain_shader.setUniform1i("camNam", 1);	
+	}
 	float position[3];
-	ofVec3f posvec = cam.getPosition();
+	ofVec3f posvec = mainCam.getPosition();
 	position[0] = posvec.x;
 	position[1] = posvec.y;
 	position[2] = posvec.z;
@@ -246,7 +253,7 @@ void ofApp::renderTerrain(ofCamera cam) {
 	//fprintf(stderr,"FOV: %f\n", camera1.getFov());
   
 	//Light
-	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);  
+	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z); 
 	terrain.draw(wireframemode);  
 	terrain_shader.end();
 	myTexture.unbind();
