@@ -91,7 +91,8 @@ void ofApp::setup(){
 
 void ofApp::genTerrain()
 {
-	for (int i=0; i< 6; i++)
+  terrain.reset();
+	for (int i=0; i< 5; i++)
 	{
 		terrain.diamondSquareIterationByIdx();
 	}
@@ -212,11 +213,15 @@ void ofApp::renderTerrain() {
   
   auto leftPlaneNormal = (fbl - nbl).cross(ntl - nbl).normalized();
   auto rightPlaneNormal = (ntr - nbr).cross(fbr - nbr).normalized(); // right
-  auto frontPlaneNormal = (ntl - ntr).cross(nbr - ntr).normalized();
+  auto frontPlaneNormal = (nbr - ntr).cross(ntl - ntr).normalized();
+  auto bottomPlaneNormal = (fbr - nbr).cross(nbl - nbr).normalized();
+  auto topPlaneNormal = (ntl - ntr).cross(ftr - ntr).normalized();
   
   ofVec4f leftPlane(leftPlaneNormal.x, leftPlaneNormal.y, leftPlaneNormal.z, -leftPlaneNormal.dot(fbl));
   ofVec4f rightPlane(rightPlaneNormal.x, rightPlaneNormal.y, rightPlaneNormal.z, -rightPlaneNormal.dot(ntr));
-  ofVec4f frontPlane(frontPlaneNormal.x, frontPlaneNormal.y, frontPlaneNormal.z, -frontPlaneNormal.dot(ntl));
+  ofVec4f frontPlane(frontPlaneNormal.x, frontPlaneNormal.y, frontPlaneNormal.z, -frontPlaneNormal.dot(ntr));
+  ofVec4f bottomPlane(bottomPlaneNormal.x, bottomPlaneNormal.y, bottomPlaneNormal.z, -bottomPlaneNormal.dot(nbr));
+  ofVec4f topPlane(bottomPlaneNormal.x, bottomPlaneNormal.y, bottomPlaneNormal.z, -bottomPlaneNormal.dot(ntr));
 
   
 	myTexture.bind();
@@ -226,6 +231,8 @@ void ofApp::renderTerrain() {
   terrain_shader.setUniform4f("leftPlane", leftPlane);
   terrain_shader.setUniform4f("rightPlane", rightPlane);
   terrain_shader.setUniform4f("frontPlane", frontPlane);
+  terrain_shader.setUniform4f("bottomPlane", bottomPlane);
+  terrain_shader.setUniform4f("topPlane", topPlane);
 	terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
 	terrain_shader.setUniform1f("minHeight", terrain.minHeight);
 	terrain_shader.setUniform1f("scale", scale);

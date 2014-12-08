@@ -16,6 +16,8 @@ uniform float camFOV;
 uniform vec4 leftPlane;
 uniform vec4 rightPlane;
 uniform vec4 frontPlane;
+uniform vec4 bottomPlane;
+uniform vec4 topPlane;
 
 
 //uniform mat4 tesselationCamMVP;
@@ -53,9 +55,9 @@ bool positiveDistance(vec4 plane, vec4 point) {
 bool insideFrustum(vec4 point) {
 
   return positiveDistance(leftPlane, point) &&
-positiveDistance(rightPlane, point); //  &&
-//        positiveDistance(frontPlane, vs_vertexWorldSpace[i]);
-//return positiveDistance(rightPlane, vs_vertexWorldSpace[i]);
+        positiveDistance(rightPlane, point) &&
+        positiveDistance(frontPlane, point) &&
+        positiveDistance(bottomPlane, point);
 }
 
  vec4 divide (vec4 v1, vec4 v2)
