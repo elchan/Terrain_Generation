@@ -6,6 +6,10 @@ uniform float scale;
 //Camera 
 uniform mat4 modelViewProjectionMatrix;
 uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 camera1ModelViewMatrix;
+uniform mat4 camera1ProjectionMatrix;
+uniform mat4 camera1ModelViewProjectionMatrix;
 
 //light 
 uniform vec3 LightPosition ;
@@ -18,6 +22,8 @@ layout(location = 10) in vec4 color;
 
 out vec2 vs_texcoord;
 out float vs_lightIntensity;
+out vec4 vs_vertexWorldSpace;
+
 
 void main(){
 
@@ -42,5 +48,8 @@ void main(){
 	vs_texcoord = texcoord;
 	vs_lightIntensity = light_intensity;
 
-    gl_Position = modelViewProjectionMatrix * position;
+  gl_Position = modelViewProjectionMatrix * position;
+  //gl_Position = camera1ProjectionMatrix * camera1ModelViewMatrix * position;
+  vs_vertexWorldSpace = position;
+  
 }

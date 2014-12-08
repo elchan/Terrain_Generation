@@ -86,8 +86,10 @@ public:
 		int fboHeight;
 		float camFOV;
   
-    ofRectangle rect;
-
+    bool renderCamera1;
+    ofMatrix4x4 camera1ModelViewMatrix;
+    ofMatrix4x4 camera1ProjectionMatrix;
+  
 #ifdef __APPLE__
   
 ofxSecondWindow secondWindow;

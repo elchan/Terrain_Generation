@@ -1,5 +1,5 @@
 #include "ofApp.h"
-
+#include <cmath>
 /*
 	rotateToNormal will rotate everything using ofRotate. the rotation amount
 	and axis are generated using an ofQuaternion. the trick is to use ofQuaternion
@@ -21,7 +21,7 @@ void rotateToNormal(ofVec3f normal) {
 }
 
 //--------------------------------------------------------------
-
+//static double PI = 3.14159265359;
 
 void ofApp::setup(){
 #ifdef TARGET_OPENGLES
@@ -35,9 +35,11 @@ void ofApp::setup(){
 #endif
 
 #ifdef __APPLE__
-  secondWindow.setup("second window", 50, 50, 512, 384, false);
+  secondWindow.setup("second window", 50, 50, 512 * 1.5, 384 * 1.5, false);
   camera1.setup();
 #endif
+//  camera1.setNearClip(3);
+//  camera1.setFarClip(100);
 	fboWidth = 256;
 	fboHeight = 256;
 	angle = 0;
@@ -93,6 +95,8 @@ void ofApp::setup(){
     imageMask.loadImage("mask.jpg");
     fbo.allocate(fboWidth, fboHeight);
     maskFbo.allocate(fboWidth, fboHeight);
+  
+  wireframemode = true;
 
 }
 
@@ -121,7 +125,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 	glShadeModel ( GL_SMOOTH ) ;
 	glFrontFace(GL_CW);
 	//glEnable(GL_COLOR_MATERIAL) ;
@@ -133,7 +137,12 @@ void ofApp::draw(){
 		sprintf(str, "x=%2.0f y=%2.0f z=%2.0f frame rate: %2.0f\n\0",current.x, current.y, current.z, ofGetFrameRate());
 		fontObj.drawString (str,0, terrain.maxHeight);
 	}
+  
+
+  
 	camera1.begin();
+  camera1ModelViewMatrix = camera1.getModelViewMatrix();//ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
+  camera1ProjectionMatrix = camera1.getProjectionMatrix(); //ofGetCurrentMatrix(OF_MATRIX_PROJECTION);
 	renderTerrain();
 	camera1.end();
   /*
@@ -190,12 +199,46 @@ void ofApp::renderTerrain() {
   
 	ofMatrix4x4 cameraViewMatrix;
 	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
+// 	camera1.lookAt(ofVec3f(0, 0, 0));
+//  auto lookDir = (ofVec3f(0, 0, 0) - camera1.getGlobalPosition()).normalized();
+  auto cameraPos = camera1.getGlobalPosition();
+  auto up = camera1.getUpDir().normalized();
+  auto right = camera1.getXAxis().normalized();
+  auto cameraLookDir = camera1.getLookAtDir().normalized(); //right.cross(up).normalized();
+//  right = cameraLookDir.cross(up);
+//  auto pNearC = cameraPos + (cameraLookDir * camera1.getNearClip());
+
+  auto fov = camera1.getFov()*PI/180;
+  auto halfHeightNear = std::tan(fov/2) * camera1.getNearClip();
+  auto halfWidthNear = halfHeightNear * camera1.getAspectRatio();
+  auto ntr = cameraPos + (cameraLookDir * camera1.getNearClip()) + (right * halfWidthNear) + (up * halfHeightNear);
+  auto ntl = cameraPos + (cameraLookDir * camera1.getNearClip()) + (-right * halfWidthNear) + (up * halfHeightNear);
+  auto nbr = cameraPos + (cameraLookDir * camera1.getNearClip()) + (right * halfWidthNear) + (-up * halfHeightNear);
+  auto nbl = cameraPos + (cameraLookDir * camera1.getNearClip()) + (-right * halfWidthNear) + (-up * halfHeightNear);
+  
+  auto halfHeightFar = std::tan(fov/2) * camera1.getFarClip();
+  auto halfWidthFar = halfHeightFar * camera1.getAspectRatio();
+  auto ftr = cameraPos + (cameraLookDir * camera1.getFarClip()) + (right * halfWidthFar) + (up * halfHeightFar);
+  auto ftl = cameraPos + (cameraLookDir * camera1.getFarClip()) + (-right * halfWidthFar) + (up * halfHeightFar);
+  auto fbr = cameraPos + (cameraLookDir * camera1.getFarClip()) + (right * halfWidthFar) + (-up * halfHeightFar);
+  auto fbl = cameraPos + (cameraLookDir * camera1.getFarClip()) + (-right * halfWidthFar) + (-up * halfHeightFar);
+  
+  auto leftPlaneNormal = (fbl - nbl).cross(ntl - nbl).normalized();
+  auto rightPlaneNormal = (ntr - nbr).cross(fbr - nbr).normalized(); // right
+  auto frontPlaneNormal = (ntl - ntr).cross(nbr - ntr).normalized();
+  
+  ofVec4f leftPlane(leftPlaneNormal.x, leftPlaneNormal.y, leftPlaneNormal.z, -leftPlaneNormal.dot(fbl));
+  ofVec4f rightPlane(rightPlaneNormal.x, rightPlaneNormal.y, rightPlaneNormal.z, -rightPlaneNormal.dot(ntr));
+  ofVec4f frontPlane(frontPlaneNormal.x, frontPlaneNormal.y, frontPlaneNormal.z, -frontPlaneNormal.dot(ntl));
   
 	myTexture.bind();
 	terrain_shader.begin();
-	
 	terrain_shader.setUniformTexture("tex0", landImg, 1);
-  
+  terrain_shader.setUniformMatrix4f("camera1ModelViewMatrix", camera1ModelViewMatrix);
+  terrain_shader.setUniformMatrix4f("camera1ProjectionMatrix", camera1ProjectionMatrix);
+  terrain_shader.setUniform4f("leftPlane", leftPlane);
+  terrain_shader.setUniform4f("rightPlane", rightPlane);
+  terrain_shader.setUniform4f("frontPlane", frontPlane);
 	terrain_shader.setUniform1f("maxHeight", terrain.maxHeight);
 	terrain_shader.setUniform1f("minHeight", terrain.minHeight);
 	terrain_shader.setUniform1f("scale", scale);
@@ -255,6 +298,9 @@ void ofApp::keyPressed(int key){
   }
   else if (key == '4') {
     tessLevel = 4;
+  }
+  else if (key == ' ') {
+    wireframemode = !wireframemode;
   }
 #else
 	float posInc = 10.0f;

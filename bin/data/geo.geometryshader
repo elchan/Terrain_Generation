@@ -11,7 +11,11 @@ uniform float imgPlane;
 uniform vec3 camLoc;
 uniform int poly;
 uniform float camFOV;
+uniform float ration = float(1024)/float(768);
 
+uniform vec4 leftPlane;
+uniform vec4 rightPlane;
+uniform vec4 frontPlane;
 
 //uniform mat4 tesselationCamMVP;
 
@@ -24,6 +28,7 @@ uniform float camFOV;
 
 in vec2 vs_texcoord[];
 in float vs_lightIntensity[];
+in vec4 vs_vertexWorldSpace[];
 
 out vec2 gs_texcoord;
 out float gs_lightIntensity;
@@ -31,6 +36,20 @@ out float gs_lightIntensity;
 layout(triangles) in;
 layout (triangle_strip, max_vertices=128) out;
 
+
+bool positiveDistance(vec4 plane, vec4 point) {
+  vec3 normal = plane.xyz;
+  float d = plane.w;
+  return dot(point.xyz, normal) + d > 0;
+}
+
+bool insideFrustum(vec4 point) {
+
+  return positiveDistance(leftPlane, point) &&
+positiveDistance(rightPlane, point); //  &&
+//        positiveDistance(frontPlane, vs_vertexWorldSpace[i]);
+//return positiveDistance(rightPlane, vs_vertexWorldSpace[i]);
+}
 
  vec4 divide (vec4 v1, vec4 v2)
  {
@@ -390,14 +409,16 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 }
 */
 
+
+
 void noTess()
 {
 	for (int i=0; i< gl_in.length(); i++)
 	{
 		gl_Position = gl_in[i].gl_Position;
-		gs_texcoord = vs_texcoord[i] ; 
-		gs_lightIntensity = vs_lightIntensity[i] ; 
-		EmitVertex();
+		gs_texcoord = vs_texcoord[i];
+    gs_lightIntensity = vs_lightIntensity[i] ;
+    EmitVertex();
 	}
 }
 
@@ -449,7 +470,7 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
     //vec4 projP0 = tesselationCamMVP * p0;
 		int localTessLevel = tessLevel;
 
-		if (localTessLevel == 0)
+		if (localTessLevel == 0 || ! (insideFrustum(vs_vertexWorldSpace[0]) && insideFrustum(vs_vertexWorldSpace[1]) && insideFrustum(vs_vertexWorldSpace[2])))
 		{
 			noTess();
 		}
@@ -460,32 +481,44 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 		float r2 = .11;
 		float r3 = .33;
 		float r4 = 1.;
-		*/
+
 
 		float r1 = 0;
 		float r2 = 200;
 		float r3 = 400;
 		float r4 = 600;
+*/
+float distanceToCamera = length(vs_vertexWorldSpace[0].xyz - camLoc);
+if (distanceToCamera > 650)
+{
+  noTess();
 
-	  if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r1, r2))
+} else if (distanceToCamera > 450) {
+  tessellate1(p0,p1,p2,0,3);
+} else if (distanceToCamera > 150) {
+  tessellate2(p0,p1,p2,0,3);
+} else {
+  tessellate3(p0,p1,p2,0,3);
+}
+	 /* if (length(p0) < -150)
 	  {
-		tessellate3(p0,p1,p2,0,3);
+      tessellate3(p0,p1,p2,0,3);
+
 	  }
-	  else if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r2, r3))
+	  else if (p0.z < -100)
 
 	  {
 		tessellate2(p0,p1,p2,0,3);
 	  }
-	  else if (checkInFOV(p0.xyz, camLoc.xyz, camFOV, r3, r4))
+	  else if (p0.z < -50)
 	  {
-		tessellate1(p0,p1,p2,0,3);
+      tessellate1(p0,p1,p2,0,3);
 	  }
 	  else
 	  {
-		//tessellate1(p0,p1,p2,0,3);
 		noTess();
-		//tessellate1(p0,p1,p2,0,3);
 	  }
+*/
 	}
 
 	EndPrimitive();
