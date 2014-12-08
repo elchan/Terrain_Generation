@@ -24,15 +24,6 @@ void rotateToNormal(ofVec3f normal) {
 //static double PI = 3.14159265359;
 
 void ofApp::setup(){
-#ifdef TARGET_OPENGLES
-	shader.load("shadersES2/shader");
-#else
-	if(ofIsGLProgrammableRenderer()){
-		shader.load("shadersGL3/shader");
-	}else{
-		shader.load("shadersGL2/shader");
-	}
-#endif
 
 #ifdef __APPLE__
   secondWindow.setup("second window", 50, 50, 512 * 1.5, 384 * 1.5, false);
@@ -64,15 +55,14 @@ void ofApp::setup(){
 //	m_terrain.load("NewTerrain.ply");
 	//m_terrain.load("Terrain.ply");
 	  
-//	shader.load("shader.vert", "shader.frag");
-//	model_shader.load("modelshader.vert", "modelshader.frag");
-//	terrain_shader.load("vt.vertexshader", "frag.fragmentshader"/*,"geo.geometryshader" */);
 	terrain_shader.load("shader.vert", "shader.frag", "geo.geometryshader");
-//	terrain_shader.load("shader.vert", "shader.frag");
+
 
 	tessLevel = 0;
 	//texture
 	landImg.loadImage("texture.jpg");
+	waterImg.loadImage ( "water.jpg");
+
 	//myTexture =landImg.getTextureReference();
 
 	light1_current_position = ofVec3f( 10.f ,0.f , 0.f );
@@ -85,9 +75,8 @@ void ofApp::setup(){
 	camera1.lookAt(ofVec3f(0, 0, 0));
 	target = ofVec3f(0,0,0);
   
-	camera2.setGlobalPosition(ofVec3f(0, 0,800));
-	//camera2.rotate(45,0,0,1);
-	camera2.lookAt(ofVec3f(0, 0, -800));
+	camera2.setGlobalPosition((ofVec3f(current.x, current.y, 800)));
+	camera2.lookAt(ofVec3f(0, 0, 0));
    	ofSetVerticalSync(true);
 	ofEnableDepthTest();
 	easyCam.setDistance(100);
@@ -96,7 +85,7 @@ void ofApp::setup(){
     fbo.allocate(fboWidth, fboHeight);
     maskFbo.allocate(fboWidth, fboHeight);
   
-  wireframemode = true;
+  wireframemode = false;
 
 }
 
@@ -125,7 +114,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+
 	glDisable(GL_CULL_FACE);
+
 	glShadeModel ( GL_SMOOTH ) ;
 	glFrontFace(GL_CW);
 	//glEnable(GL_COLOR_MATERIAL) ;
@@ -137,14 +128,12 @@ void ofApp::draw(){
 		sprintf(str, "x=%2.0f y=%2.0f z=%2.0f frame rate: %2.0f\n\0",current.x, current.y, current.z, ofGetFrameRate());
 		fontObj.drawString (str,0, terrain.maxHeight);
 	}
-  
 
   
 	camera1.begin();
-  camera1ModelViewMatrix = camera1.getModelViewMatrix();//ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
-  camera1ProjectionMatrix = camera1.getProjectionMatrix(); //ofGetCurrentMatrix(OF_MATRIX_PROJECTION);
 	renderTerrain();
 	camera1.end();
+
   /*
     maskFbo.begin();
 
@@ -162,6 +151,7 @@ void ofApp::draw(){
   secondWindow.begin();
 #else
   fbo.begin();
+  glDisable(GL_CULL_FACE);
 #endif
 	ofClear(128,128,128);
 	camera2.begin();
@@ -174,13 +164,15 @@ void ofApp::draw(){
   secondWindow.end();
 #else
     //maskFbo.draw(0,0);
+	glEnable(GL_CULL_FACE);
 	fbo.end();
 	//ofRotateZ(180);
-	fbo.draw(0,0,fboWidth,fboHeight);
+	fbo.draw(1024-fboWidth,768-fboHeight, fboWidth,fboHeight);
 #endif
 }
 
 void ofApp::renderTerrain() {
+
   light1.enable();
   
 	if ( angle >= 2*3.14159) angle = 0;
@@ -197,16 +189,11 @@ void ofApp::renderTerrain() {
 	ligthBulb.enableColors();
 	ligthBulb.draw();
   
-	ofMatrix4x4 cameraViewMatrix;
-	cameraViewMatrix.makeLookAtViewMatrix(camera1.getPosition() , camera1.getLookAtDir() , ofVec3f( 0.f ,1.f , 0.f));
-// 	camera1.lookAt(ofVec3f(0, 0, 0));
-//  auto lookDir = (ofVec3f(0, 0, 0) - camera1.getGlobalPosition()).normalized();
+// Frustum planes calculation
   auto cameraPos = camera1.getGlobalPosition();
   auto up = camera1.getUpDir().normalized();
   auto right = camera1.getXAxis().normalized();
-  auto cameraLookDir = camera1.getLookAtDir().normalized(); //right.cross(up).normalized();
-//  right = cameraLookDir.cross(up);
-//  auto pNearC = cameraPos + (cameraLookDir * camera1.getNearClip());
+  auto cameraLookDir = camera1.getLookAtDir().normalized();
 
   auto fov = camera1.getFov()*PI/180;
   auto halfHeightNear = std::tan(fov/2) * camera1.getNearClip();
@@ -230,12 +217,12 @@ void ofApp::renderTerrain() {
   ofVec4f leftPlane(leftPlaneNormal.x, leftPlaneNormal.y, leftPlaneNormal.z, -leftPlaneNormal.dot(fbl));
   ofVec4f rightPlane(rightPlaneNormal.x, rightPlaneNormal.y, rightPlaneNormal.z, -rightPlaneNormal.dot(ntr));
   ofVec4f frontPlane(frontPlaneNormal.x, frontPlaneNormal.y, frontPlaneNormal.z, -frontPlaneNormal.dot(ntl));
+
   
 	myTexture.bind();
 	terrain_shader.begin();
 	terrain_shader.setUniformTexture("tex0", landImg, 1);
-  terrain_shader.setUniformMatrix4f("camera1ModelViewMatrix", camera1ModelViewMatrix);
-  terrain_shader.setUniformMatrix4f("camera1ProjectionMatrix", camera1ProjectionMatrix);
+  terrain_shader.setUniformTexture("tex1", waterImg, 2);
   terrain_shader.setUniform4f("leftPlane", leftPlane);
   terrain_shader.setUniform4f("rightPlane", rightPlane);
   terrain_shader.setUniform4f("frontPlane", frontPlane);
@@ -255,12 +242,12 @@ void ofApp::renderTerrain() {
 	position[1] = posvec.y;
 	position[2] = posvec.z;
 	terrain_shader.setUniform3fv("camLoc",position,1);
-	terrain_shader.setUniform1f("camFOV", camera1.getFov()); 
+	terrain_shader.setUniform1f("camFOV", camera1.getFov());
 	//terrain_shader.setUniform1f("camFOV", 180); 
 	//fprintf(stderr,"FOV: %f\n", camera1.getFov());
   
 	//Light
-	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z);  
+	terrain_shader.setUniform3f ("LightPosition",light1.getPosition().x, light1.getPosition().y ,light1.getPosition().z); 
 	terrain.draw(wireframemode);  
 	terrain_shader.end();
 	myTexture.unbind();
@@ -281,7 +268,13 @@ void rotCam(ofCamera &cam, float deg)
 	cam.rotate(deg, 0, 0, 1);
 }
 
-//--------------------------------------------------------------
+void incrFOV(ofCamera &cam, float incr)
+{
+	float fov = cam.getFov();
+	fov+= incr;
+	cam.setFov(fov);
+}
+
 void ofApp::keyPressed(int key){
 #ifdef __APPLE__
   if (key == '0') {
@@ -301,6 +294,9 @@ void ofApp::keyPressed(int key){
   }
   else if (key == ' ') {
     wireframemode = !wireframemode;
+  }
+  else if (key == 'g') {
+    genTerrain();
   }
 #else
 	float posInc = 10.0f;
@@ -376,17 +372,18 @@ void ofApp::keyPressed(int key){
 		case 't':
 			if (topView)
 			{
-				target.y=terrain.minHeight;
-				current.y= scale*550;
+				topView = false;
+				//mainCam = camera2;
+				//insetCam = camera1;
 				fprintf(stderr,"Top View.\n");
 			}
 			else
 			{
-				target.y=0;
-				current.y= terrain.maxHeight+defaultHeight;
-				fprintf(stderr,"Ortho View.\n");
+				topView = true;
+				//mainCam = camera1;
+				//insetCam = camera2;
+				fprintf(stderr,"Perspective View.\n");
 			}
-			topView = !topView;
 			break;
 		case 'n':
 			target.y+=posInc;
@@ -461,6 +458,23 @@ void ofApp::keyPressed(int key){
 		case '4':
 			tessLevel = 4;
 			fprintf(stderr, "tessLevel= %i\n",tessLevel);
+			break;
+		case 'x':
+			{
+				float incr = 1.;
+				incrFOV(camera1, incr);
+				incrFOV(camera2, incr);
+				fprintf(stderr, "Cam1:%f Cam2:%f\n",camera1.getFov(), camera2.getFov());
+			}
+			break;
+		case 'z':
+			{
+				float incr = -1.;
+				incrFOV(camera1, incr);
+				incrFOV(camera2, incr);
+				fprintf(stderr, "Cam1:%f Cam2:%f\n",camera1.getFov(), camera2.getFov());
+			}
+			break;
 			break;
 
 

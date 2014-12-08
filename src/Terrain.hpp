@@ -34,7 +34,7 @@ struct Terrain {
     float maxHeight;
 
 
-    Terrain() : indicesEnabled(true), unit(1024.f), kModifier(0.00002) {
+    Terrain() : indicesEnabled(true), unit(1024.f), kModifier(0.00005) {
         
         reset();
 		wireframe = false;

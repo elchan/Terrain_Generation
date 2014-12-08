@@ -32,6 +32,7 @@ class ofApp : public ofBaseApp{
 
 public:
 		ofImage landImg;  
+		ofImage waterImg;
 		ofVec3f previous, current, target;
 		ofEasyCam easyCam;		
 		ofCamera fullCamera;
@@ -85,11 +86,7 @@ public:
 		int fboWidth;
 		int fboHeight;
 		float camFOV;
-  
-    bool renderCamera1;
-    ofMatrix4x4 camera1ModelViewMatrix;
-    ofMatrix4x4 camera1ProjectionMatrix;
-  
+
 #ifdef __APPLE__
   
 ofxSecondWindow secondWindow;
