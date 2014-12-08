@@ -282,9 +282,6 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 	float x = r1*cos(fovrad);
 	float y = r1*sin(fovrad);
 
-	x = vloc.x;
-	y = vloc.y;
-
 	float rad = (tan(sqr.x/sqr.y)); // In radians
 	bool inFOV = true;
 
