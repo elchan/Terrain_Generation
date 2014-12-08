@@ -51,5 +51,6 @@ void main(){
 
     gl_Position = modelViewProjectionMatrix * position;
 	position_pretrans = position;
-	tcamLoc = (modelViewProjectionMatrix * vec4(camLoc.xyz,1.)).xyz;
+	//tcamLoc = (modelViewProjectionMatrix * vec4(camLoc.xyz,1.)).xyz;
+	tcamLoc = camLoc.xyz;
 }

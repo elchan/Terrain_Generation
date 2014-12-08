@@ -11,7 +11,7 @@ uniform float imgPlane;
 uniform vec3 tcamLoc;
 uniform int poly;
 uniform float camFOV;
-
+uniform int camNam;
 
 //uniform mat4 tesselationCamMVP;
 
@@ -57,13 +57,61 @@ layout (triangle_strip, max_vertices=128) out;
 
  }
 
-void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2)
  {
+			// Divide the edges of the triangle.
 			vec4 np0 = divide(v2,v1);
 			vec4 np1 = divide(v0, v2);
 			vec4 np2 = divide(v1,v0);
 
-			
+			// Output V2
+			gl_Position = v2;
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
+			EmitVertex();
+
+			// Output V0
+ 			gl_Position = v0;
+			gs_lightIntensity = vs_lightIntensity[0];
+			gs_texcoord = vs_texcoord[0] ;
+			height = vs_height[0];
+			EmitVertex();
+
+			// Output V1
+			gl_Position = v1;
+			gs_lightIntensity = vs_lightIntensity[1];
+			gs_texcoord = vs_texcoord[1] ;
+			height = vs_height[1];
+			EmitVertex();        
+        
+			// Output NP1
+			gl_Position = np1;
+			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
+			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
+			height = (vs_height[0]+ vs_height[2]) / 2 ;
+			EmitVertex();
+
+			// Output NP2
+			gl_Position = np2;
+			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
+			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
+			height = (vs_height[1]+ vs_height[0]) / 2 ;
+			EmitVertex();
+
+			// Output NP3
+			gl_Position = np0;
+			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
+			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
+			height = (vs_height[2]+ vs_height[1]) / 2 ;
+			EmitVertex();
+ }
+
+ void tessellate2(in vec4 v0, in vec4 v1, in vec4 v2)
+ {
+			vec4 np0 = divide(v2,v1);
+			vec4 np1 = divide(v0, v2);
+			vec4 np2 = divide(v1,v0);
 
 			gl_Position = v2;
 			gs_lightIntensity = vs_lightIntensity[2];
@@ -101,13 +149,24 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
- }
+			tessellate1(v0,np2,np1);
+			tessellate1(np2,v1,np0);			
+			tessellate1(np0,v2,np1);
+			tessellate1(np1,np2,np0);
+}
 
- void tessellate2(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+
+void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2)
  {
 			vec4 np0 = divide(v2,v1);
 			vec4 np1 = divide(v0, v2);
 			vec4 np2 = divide(v1,v0);
+
+			gl_Position = v2;
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
+			EmitVertex();
 
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
@@ -119,13 +178,7 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
 			height = vs_height[1];
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			height = vs_height[2];
-			EmitVertex();
+			EmitVertex();        
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
@@ -145,19 +198,24 @@ void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
-			
-			tessellate1(v0,np2,np1,0,0);
-			tessellate1(np2,v1,np0,0,0);			
-			tessellate1(np1,np0,v2,0,0);
-			tessellate1(np1,np2,np0,0,0);
+			tessellate2(v0,np2,np1);
+			tessellate2(np2,v1,np0);			
+			tessellate2(np0,v2,np1);
+			tessellate2(np1,np2,np0);
 }
 
 
-void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
+ void tessellate4(in vec4 v0, in vec4 v1, in vec4 v2)
  {
 			vec4 np0 = divide(v2,v1);
 			vec4 np1 = divide(v0, v2);
 			vec4 np2 = divide(v1,v0);
+
+			gl_Position = v2;
+			gs_lightIntensity = vs_lightIntensity[2];
+			gs_texcoord = vs_texcoord[2] ;
+			height = vs_height[2];
+			EmitVertex();
 
  			gl_Position = v0;
 			gs_lightIntensity = vs_lightIntensity[0];
@@ -169,13 +227,7 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			gs_lightIntensity = vs_lightIntensity[1];
 			gs_texcoord = vs_texcoord[1] ;
 			height = vs_height[1];
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			height = vs_height[2];
-			EmitVertex();
+			EmitVertex();        
         
 			gl_Position = np1;
 			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
@@ -195,228 +247,11 @@ void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termle
 			height = (vs_height[2]+ vs_height[1]) / 2 ;
 			EmitVertex();
 
-			tessellate2(v0, np2, np1,0,0);
-			tessellate2(np2, v1, np0,0,0);
-			tessellate2(np2, np0, np1,0,0);
-			tessellate2(np1, np0, v2,0,0);			
+			tessellate3(v2,np1,np0);
+			tessellate3(np2,v1,np0);			
+			tessellate3(np1,v0,np2);
+			tessellate3(np2,v1,np0);
 }
-
-
- void tessellate4(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
- {
-			vec4 np0 = divide(v2,v1);
-			vec4 np1 = divide(v0, v2);
-			vec4 np2 = divide(v1,v0);
-
- 			gl_Position = v0;
-			gs_lightIntensity = vs_lightIntensity[0];
-			gs_texcoord = vs_texcoord[0] ;
-			height = vs_height[0];
-			EmitVertex();
-
-			gl_Position = v1;
-			gs_lightIntensity = vs_lightIntensity[1];
-			gs_texcoord = vs_texcoord[1] ;
-			height = vs_height[1];
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			height = vs_height[2];
-			EmitVertex();
-        
-			gl_Position = np1;
-			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
-			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
-			height = (vs_height[0]+ vs_height[2]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np2;
-			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
-			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
-			height = (vs_height[1]+ vs_height[0]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np0;
-			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
-			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
-			height = (vs_height[2]+ vs_height[1]) / 2 ;
-			EmitVertex();
-
-			tessellate3(v0, np2, np1,0,0);
-			tessellate3(np2, v1, np0,0,0);
-			tessellate3(np2, np0, np1,0,0);
-			tessellate3(np1, np0, v2,0,0);
-}
-/*
- void tessellate1(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
- {
-			vec4 np0 = divide(v2,v1);
-			vec4 np1 = divide(v0, v2);
-			vec4 np2 = divide(v1,v0);
-
-			
- 			gl_Position = v0;
-			gs_lightIntensity = vs_lightIntensity[0];
-			gs_texcoord = vs_texcoord[0] ;
-			EmitVertex();
-
-			gl_Position = v1;
-			gs_lightIntensity = vs_lightIntensity[1];
-			gs_texcoord = vs_texcoord[1] ;
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			EmitVertex();
-        
-			gl_Position = np0;
-			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
-			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np1;
-			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
-			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np2;
-			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
-			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
-			EmitVertex();
- }
-
- void tessellate2(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
- {
-			vec4 np0 = divide(v2,v1);
-			vec4 np1 = divide(v0, v2);
-			vec4 np2 = divide(v1,v0);
-
- 			gl_Position = v0;
-			gs_lightIntensity = vs_lightIntensity[0];
-			gs_texcoord = vs_texcoord[0] ;
-			EmitVertex();
-
-			gl_Position = v1;
-			gs_lightIntensity = vs_lightIntensity[1];
-			gs_texcoord = vs_texcoord[1] ;
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			EmitVertex();
-        
-			gl_Position = np0;
-			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
-			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np1;
-			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
-			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np2;
-			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
-			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
-			EmitVertex();
-			
-			tessellate1(v0,np2,np1,0,0);
-			tessellate1(np2,v1,np0,0,0);			
-			tessellate1(np1,np0,v2,0,0);
-			tessellate1(np1,np2,np0,0,0);
-}
-
-
-void tessellate3(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
- {
-			vec4 np0 = divide(v2,v1);
-			vec4 np1 = divide(v0, v2);
-			vec4 np2 = divide(v1,v0);
-
- 			gl_Position = v0;
-			gs_lightIntensity = vs_lightIntensity[0];
-			gs_texcoord = vs_texcoord[0] ;
-
-			EmitVertex();
-
-			gl_Position = v1;
-			gs_lightIntensity = vs_lightIntensity[1];
-			gs_texcoord = vs_texcoord[1] ;
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			EmitVertex();
-        
-			gl_Position = np0;
-			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
-			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np1;
-			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
-			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np2;
-			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
-			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
-			EmitVertex();
-
-			tessellate2(v0, np2, np1,0,0);
-			tessellate2(np2, v1, np0,0,0);
-			tessellate2(np2, np0, np1,0,0);
-			tessellate2(np1, np0, v2,0,0);			
-}
-
-
- void tessellate4(in vec4 v0, in vec4 v1, in vec4 v2, in int level, in int termlevel)
- {
-			vec4 np0 = divide(v2,v1);
-			vec4 np1 = divide(v0, v2);
-			vec4 np2 = divide(v1,v0);
-
- 			gl_Position = v0;
-			gs_lightIntensity = vs_lightIntensity[0];
-			gs_texcoord = vs_texcoord[0] ;
-			EmitVertex();
-
-			gl_Position = v1;
-			gs_lightIntensity = vs_lightIntensity[1];
-			gs_texcoord = vs_texcoord[1] ;
-			EmitVertex();
-        
-			gl_Position = v2;
-			gs_lightIntensity = vs_lightIntensity[2];
-			gs_texcoord = vs_texcoord[2] ;
-			EmitVertex();
-        
-			gl_Position = np0;
-			gs_lightIntensity = (vs_lightIntensity[2] + vs_lightIntensity[1]) / 2;
-			gs_texcoord = (vs_texcoord[2] + vs_texcoord[1]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np1;
-			gs_lightIntensity = (vs_lightIntensity[0] + vs_lightIntensity[2]) / 2;
-			gs_texcoord = (vs_texcoord[0] + vs_texcoord[2]) / 2 ;
-			EmitVertex();
-
-			gl_Position = np2;
-			gs_lightIntensity = (vs_lightIntensity[1] + vs_lightIntensity[0]) / 2;
-			gs_texcoord = (vs_texcoord[1] + vs_texcoord[0]) / 2 ;
-			EmitVertex();
-
-			tessellate3(v0, np2, np1,0,0);
-			tessellate3(np2, v1, np0,0,0);
-			tessellate3(np2, np0, np1,0,0);
-			tessellate3(np1, np0, v2,0,0);
-}
-*/
 
 void noTess()
 {
@@ -425,7 +260,6 @@ void noTess()
 		gl_Position = gl_in[i].gl_Position;
 		gs_texcoord = vs_texcoord[i] ; 
 		gs_lightIntensity =  vs_lightIntensity[i] ; 
-		//gs_lightIntensity =  0. ; 
 		height = vs_height[i] ;
 		EmitVertex();
 	}
@@ -433,7 +267,14 @@ void noTess()
 
 bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 {
-	if (vloc.y > cloc.y) return false;
+	if (camNam == 2)
+	{
+		if (vloc.y > cloc.y) return false; //Vertex is behind camera
+	}
+	else
+	{
+		if (vloc.y < cloc.y) return false; //Vertex is behind camera
+	}
 
 	vec2 sqr = cloc.xy + vloc.xy;
 	float fovrad = ((fov)/360)*(2*PI);
@@ -441,13 +282,18 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 	float x = r1*cos(fovrad);
 	float y = r1*sin(fovrad);
 
-	float rad = (tan(sqr.x/sqr.y)); // In radians
-	bool inFOV = false;
+	x = vloc.x;
+	y = vloc.y;
 
-	if ((abs(rad) <= fovrad))
+	float rad = (tan(sqr.x/sqr.y)); // In radians
+	bool inFOV = true;
+
+	
+	if (((rad) > fovrad))
 	{
-		inFOV = true;
+		inFOV = false;
 	}
+	
 
 	if (((radius >=r1) && (radius < r2)) && inFOV)
 	{
@@ -462,10 +308,10 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
  void main()
 {
 		vec4 p0 = gl_in[0].gl_Position;
+		//vec4 p0 = position_pretrans[0];
 		vec4 p1 = gl_in[1].gl_Position;
 		vec4 p2 = gl_in[2].gl_Position;
 
-    //vec4 projP0 = tesselationCamMVP * p0;
 		int localTessLevel = tessLevel;
 
 		if (localTessLevel == 0)
@@ -474,33 +320,25 @@ bool checkInFOV(vec3 vloc, vec3 cloc, float fov, float r1, float r2)
 		}
 		else
 		{
-		/*
-		float edge = (2*maxX)*(2*maxX);
-		float r1 = 0*sqrt(edge);
-		float r2 = .11*sqrt(edge);
-		float r3 = .33*sqrt(edge);
-		float r4 = 1.*sqrt(edge);
-		*/
 
-		
 		float r1 = 0;
-		float r2 = 200;
-		float r3 = 400;
-		float r4 = 600;
+		float r2 = 256;
+		float r3 = 384;
+		float r4 = 512;
 		
 
-	  if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r1, r2))
+	  if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r1, r2))
 	  {
-		tessellate3(p0,p1,p2,0,3);
+		tessellate3(p0,p1,p2);
 	  }
-	  else if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r2, r3))
+	  else if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r2, r3))
 
 	  {
-		tessellate2(p0,p1,p2,0,3);
+		tessellate2(p0,p1,p2);
 	  }
-	  else if (checkInFOV(p0.xyz, tcamLoc.xyz, camFOV, r3, r4))
+	  else if (checkInFOV(p1.xyz, tcamLoc.xyz, camFOV, r3, r4))
 	  {
-		tessellate1(p0,p1,p2,0,3);
+		tessellate1(p0,p1,p2);
 	  }
 	  else
 	  {
